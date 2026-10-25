@@ -1,0 +1,15 @@
+# 图片原始素材（AI 生成的高分辨率 PNG，约 88MB）
+# 已裁切压缩进 assets/images/，不属于网站发布内容，不入库
+/raw-images/
+
+# 项目工作记忆目录
+/.workbuddy/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
