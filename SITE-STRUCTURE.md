@@ -8,28 +8,28 @@
 
 ---
 
-## 〇、实施状态（2026-10-24 更新）
+## 〇、实施状态（2026-10-25 更新）
 
 **18 个页面已全部建成并通过全站校验。** Phase 1-3 完成，Phase 4 待办。
 
 | 页面 | 状态 | 主词 | JSON-LD |
 |---|---|---|---|
 | index.html | 已重写 | custom lapel pins wholesale | Organization + WebSite + WebPage + ItemList + HowTo + FAQPage |
-| wholesale-custom-pins.html | 已重写 | wholesale custom enamel pins | BreadcrumbList + ItemList + Product×5 + FAQPage |
-| custom-metal-swag.html | 已重写 | wholesale custom challenge coins | BreadcrumbList + ItemList + Product×6 |
-| bulk-order-guide.html | 已建 | bulk order lapel pins | BreadcrumbList + Service + OfferCatalog + FAQPage |
-| china-pin-factory.html | 已重写 | china lapel pin factory | BreadcrumbList + Organization + LocalBusiness |
-| wholesale-quote.html | 已重写 | custom lapel pin quote | BreadcrumbList + ContactPage + Service + OfferCatalog |
-| blog.html | 已建 | 内容中枢 | BreadcrumbList + Blog + ItemList |
-| blog-how-to-order-custom-lapel-pins-from-china.html | 已建 | how to order custom lapel pins from china | BreadcrumbList + BlogPosting + FAQPage |
-| blog-hard-enamel-vs-soft-enamel-pins.html | 已建 | hard enamel vs soft enamel pins | BreadcrumbList + BlogPosting + FAQPage |
-| blog-lapel-pin-sizes-guide.html | 已建 | lapel pin sizes | BreadcrumbList + BlogPosting + FAQPage |
-| blog-custom-challenge-coin-sizes-guide.html | 已建 | custom challenge coin sizes | BreadcrumbList + BlogPosting + FAQPage |
-| privacy-policy.html | 已建 | 无 | BreadcrumbList + WebPage |
-| custom-metal-badges.html | 已建 | custom metal badges | Organization + Service |
-| samples.html | 已建 | custom lapel pin samples | Organization + Service |
-| faq.html | 已建 | lapel pin faq | FAQPage（27 问） |
-| contact.html | 已建 | contact lapel pin factory | Organization + ContactPage + LocalBusiness |
+| products/custom-enamel-pins.html | 已重写 | wholesale custom enamel pins | BreadcrumbList + ItemList + Product×5 + FAQPage |
+| products/custom-metal-swag.html | 已重写 | wholesale custom challenge coins | BreadcrumbList + ItemList + Product×6 |
+| guides/bulk-order-guide.html | 已建 | bulk order lapel pins | BreadcrumbList + Service + OfferCatalog + FAQPage |
+| company/factory.html | 已重写 | china lapel pin factory | BreadcrumbList + Organization + LocalBusiness |
+| products/request-a-quote.html | 已重写 | custom lapel pin quote | BreadcrumbList + ContactPage + Service + OfferCatalog |
+| blog/index.html | 已建 | 内容中枢 | BreadcrumbList + Blog + ItemList |
+| blog/how-to-order-custom-lapel-pins-from-china.html | 已建 | how to order custom lapel pins from china | BreadcrumbList + BlogPosting + FAQPage |
+| blog/hard-enamel-vs-soft-enamel-pins.html | 已建 | hard enamel vs soft enamel pins | BreadcrumbList + BlogPosting + FAQPage |
+| blog/lapel-pin-sizes-guide.html | 已建 | lapel pin sizes | BreadcrumbList + BlogPosting + FAQPage |
+| blog/custom-challenge-coin-sizes-guide.html | 已建 | custom challenge coin sizes | BreadcrumbList + BlogPosting + FAQPage |
+| legal/privacy-policy.html | 已建 | 无 | BreadcrumbList + WebPage |
+| products/custom-metal-badges.html | 已建 | custom metal badges | Organization + Service |
+| products/samples.html | 已建 | custom lapel pin samples | Organization + Service |
+| guides/faq.html | 已建 | lapel pin faq | FAQPage（27 问） |
+| company/contact.html | 已建 | contact lapel pin factory | Organization + ContactPage + LocalBusiness |
 | 404.html | 已建 | 无 | WebPage（noindex） |
 | thank-you.html | 已建 | 无 | WebPage（noindex, nofollow）· 仅表单提交后展示，站内无任何入口链接 |
 
@@ -103,41 +103,76 @@
 
 ## 二、信息架构
 
-采用**扁平 URL**，全部落在根目录，文章用 `blog-` 前缀而非子目录。
+采用**分类目录 URL**，按买家路径分五组，根目录只留系统文件与入口页。
 
-理由有三个：一是静态托管零配置，任何主机（Cloudflare Pages / Netlify / Nginx / 虚拟主机）直接丢进去就能跑；二是 `file://` 双击就能预览，不用起服务；三是避免尾斜杠、canonical、相对路径三件套打架。以后要换 `/blog/slug/` 干净 URL，一张 301 映射表就能迁走。
+最初（2026-10-24）用的是扁平 URL，18 个页面全堆在根目录。2026-10-25 改为分类目录，理由是文件一多就没法看了，18 个平铺文件和 5 个目录在维护时的差别很大 —— 找一条产品页要在一屏长列表里扫，而目录结构本身就是给维护者看的地图。
+
+改结构时保住了两条原扁平结构的好性质：
+
+1. **静态托管零配置。** 子目录被静态服务器原样映射成 URL 路径，Cloudflare Pages / Netlify / Nginx / 虚拟主机都不用额外配置，GitHub Pages 直接就能跑。
+2. **`file://` 双击就能预览，不用起服务。** 站内链接一律用相对路径（`../products/request-a-quote.html`），不写目录形式（`../products/`）—— 浏览器打开 `file://` 目录时显示的是文件列表而不是 `index.html`，写成目录形式会丢掉双击预览。代价是 `blog/index.html` 的对外 URL 仍由 canonical 指向干净的 `/blog/`。
 
 ```
-/  (index.html)                                        首页 · 工厂定位 + 信任锚 + 规格速配器 + FAQ + RFQ
+/  (index.html)                                   首页 · 工厂定位 + 信任锚 + 规格速配器 + FAQ + RFQ
 │
-├── wholesale-custom-pins.html                         核心品类 · 5 种工艺 + 电镀 + 背扣 + 包装
-├── custom-metal-swag.html                             延伸品类 · 挑战币 / 奖牌 / 钥匙扣 / 皮带扣 / 袖扣
-├── custom-metal-badges.html                           延伸品类 · 徽章类目（服务徽章 / 盾形 / 机构徽章）
-├── bulk-order-guide.html                              ★ 批量下单指南 · 长尾承接页，无任何金额
-├── china-pin-factory.html                             工厂与品控 · E-E-A-T 信任页
-├── wholesale-quote.html                               询价页 · 全站唯一转化落地页
-├── blog.html                                          ★ 内容中枢 · 文章索引
+├── products/                                    买什么
+│   ├── custom-enamel-pins.html                  核心品类 · 5 种工艺 + 电镀 + 背扣 + 包装
+│   ├── custom-metal-swag.html                   延伸品类 · 挑战币 / 奖牌 / 钥匙扣 / 皮带扣 / 袖扣
+│   ├── custom-metal-badges.html                 延伸品类 · 徽章类目（服务徽章 / 盾形 / 机构徽章）
+│   ├── samples.html                             ★ 打样与原型 · 四类样品 / 成本 / 交期
+│   └── request-a-quote.html                     询价页 · 全站唯一转化落地页
 │
-├── blog-how-to-order-custom-lapel-pins-from-china.html   长尾 · 采购流程
-├── blog-hard-enamel-vs-soft-enamel-pins.html             长尾 · 工艺对比
-├── blog-lapel-pin-sizes-guide.html                      长尾 · 尺寸规格
-├── blog-custom-challenge-coin-sizes-guide.html           长尾 · 挑战币规格
+├── guides/                                      怎么买
+│   ├── bulk-order-guide.html                    ★ 批量下单指南 · 长尾承接页，无任何金额
+│   └── faq.html                                 ★ 独立 FAQ · 27 问长尾承接
 │
-├── samples.html                                       ★ 打样与原型 · 四类样品 / 成本 / 交期
-├── faq.html                                           ★ 独立 FAQ · 27 问长尾承接
-├── contact.html                                       ★ 联系页 · 联系方式 / 工厂档案 / 联系表单
-├── privacy-policy.html                                ★ 信任与合规
-├── 404.html                                           ★ 兜底页
-└── thank-you.html                                     ◦ 表单提交后展示 · 不挂链接、不进 sitemap
+├── company/                                     是不是靠谱
+│   ├── factory.html                             工厂与品控 · E-E-A-T 信任页
+│   └── contact.html                             ★ 联系页 · 联系方式 / 工厂档案 / 联系表单
+│
+├── blog/                                        知识
+│   ├── index.html                               ★ 内容中枢 · 文章索引（对外 URL /blog/）
+│   ├── how-to-order-custom-lapel-pins-from-china.html   长尾 · 采购流程
+│   ├── hard-enamel-vs-soft-enamel-pins.html             长尾 · 工艺对比
+│   ├── lapel-pin-sizes-guide.html                      长尾 · 尺寸规格
+│   └── custom-challenge-coin-sizes-guide.html           长尾 · 挑战币规格
+│
+├── legal/
+│   └── privacy-policy.html                      ★ 信任与合规
+│
+├── 404.html                                     ★ 兜底页
+└── thank-you.html                               ◦ 表单提交后展示 · 不挂链接、不进 sitemap
 ```
 
 **最终 18 个页面**（原 5 + 新增 13）。文件名相对旧版的三处变化：
 
 | 旧文件名 | 新文件名 | 变化原因 |
 |---|---|---|
-| `bulk-pricing.html` | `bulk-order-guide.html` | 页面不再承载价格表，改为批量下单流程与贸易条款指南 |
-| `blog-lapel-pin-sizes-and-pricing-guide.html` | `blog-lapel-pin-sizes-guide.html` | 去掉价格字眼，主词收敛到 lapel pin sizes |
-| `blog-custom-challenge-coin-sizes-and-price-guide.html` | `blog-custom-challenge-coin-sizes-guide.html` | 去掉价格字眼，主词收敛到 custom challenge coin sizes |
+| `bulk-pricing.html` | `guides/bulk-order-guide.html` | 页面不再承载价格表，改为批量下单流程与贸易条款指南 |
+| `blog-lapel-pin-sizes-and-pricing-guide.html` | `blog/lapel-pin-sizes-guide.html` | 去掉价格字眼，主词收敛到 lapel pin sizes |
+| `blog-custom-challenge-coin-sizes-and-price-guide.html` | `blog/custom-challenge-coin-sizes-guide.html` | 去掉价格字眼，主词收敛到 custom challenge coin sizes |
+
+### 2.0.1 2026-10-25 目录重构的旧 URL 映射
+
+重构后旧地址全部失效。`404.html` 内置了旧路径 → 新路径的跳转表，命中即自动跳走；真正的 301 需要在 Cloudflare 侧配 Bulk Redirect（规则表见 `README.md`）。完整对照：
+
+| 旧路径 | 新路径 |
+|---|---|
+| `/wholesale-custom-pins.html` | `/products/custom-enamel-pins.html` |
+| `/custom-metal-swag.html` | `/products/custom-metal-swag.html` |
+| `/custom-metal-badges.html` | `/products/custom-metal-badges.html` |
+| `/samples.html` | `/products/samples.html` |
+| `/wholesale-quote.html` | `/products/request-a-quote.html` |
+| `/bulk-order-guide.html` | `/guides/bulk-order-guide.html` |
+| `/faq.html` | `/guides/faq.html` |
+| `/china-pin-factory.html` | `/company/factory.html` |
+| `/contact.html` | `/company/contact.html` |
+| `/blog.html` | `/blog/` |
+| `/blog-how-to-order-custom-lapel-pins-from-china.html` | `/blog/how-to-order-custom-lapel-pins-from-china.html` |
+| `/blog-hard-enamel-vs-soft-enamel-pins.html` | `/blog/hard-enamel-vs-soft-enamel-pins.html` |
+| `/blog-lapel-pin-sizes-guide.html` | `/blog/lapel-pin-sizes-guide.html` |
+| `/blog-custom-challenge-coin-sizes-guide.html` | `/blog/custom-challenge-coin-sizes-guide.html` |
+| `/privacy-policy.html` | `/legal/privacy-policy.html` |
 
 ### 2.0 Thank You 页的规则
 
@@ -154,20 +189,20 @@
 | 页面 | 页面职责 | 主关键词 | 转化目标 |
 |---|---|---|---|
 | index.html | 回答"这厂靠谱吗、卖什么、能做什么规格" | custom lapel pins wholesale | 跳批量下单指南 / 询价页 |
-| wholesale-custom-pins.html | 工艺选型与规格决策 | wholesale custom enamel pins | 跳询价页 |
-| custom-metal-swag.html | 承接徽章之外的金属品类 | wholesale custom challenge coins | 跳询价页 |
-| bulk-order-guide.html | 教买家怎么批量下单、怎么谈贸易条款 | bulk order lapel pins | 跳询价页 |
-| china-pin-factory.html | 证明是工厂不是贸易商 | china lapel pin factory | 跳询价页 |
-| wholesale-quote.html | 收表单 | custom lapel pin quote | 表单提交 |
-| blog.html + 4 篇 | 吃信息型长尾，建主题集群 | how to order lapel pins from china 等 | 跳品类页 / 批量下单指南 / 询价页 |
-| custom-metal-badges.html | 承接徽章类目的独立采购意图 | custom metal badges | 跳询价页 |
-| samples.html | 讲清打样流程，化解"先买样品"的顾虑 | custom lapel pin samples | 跳询价页 |
-| faq.html | 27 问承接疑问型长尾 | lapel pin faq | 跳品类页 / 询价页 |
-| contact.html | 联系方式与工厂档案，补 E-E-A-T 信任 | contact lapel pin factory | 跳询价页 |
-| privacy-policy.html | 合规与信任 | 无 | 无 |
+| products/custom-enamel-pins.html | 工艺选型与规格决策 | wholesale custom enamel pins | 跳询价页 |
+| products/custom-metal-swag.html | 承接徽章之外的金属品类 | wholesale custom challenge coins | 跳询价页 |
+| guides/bulk-order-guide.html | 教买家怎么批量下单、怎么谈贸易条款 | bulk order lapel pins | 跳询价页 |
+| company/factory.html | 证明是工厂不是贸易商 | china lapel pin factory | 跳询价页 |
+| products/request-a-quote.html | 收表单 | custom lapel pin quote | 表单提交 |
+| blog/index.html + 4 篇 | 吃信息型长尾，建主题集群 | how to order lapel pins from china 等 | 跳品类页 / 批量下单指南 / 询价页 |
+| products/custom-metal-badges.html | 承接徽章类目的独立采购意图 | custom metal badges | 跳询价页 |
+| products/samples.html | 讲清打样流程，化解"先买样品"的顾虑 | custom lapel pin samples | 跳询价页 |
+| guides/faq.html | 27 问承接疑问型长尾 | lapel pin faq | 跳品类页 / 询价页 |
+| company/contact.html | 联系方式与工厂档案，补 E-E-A-T 信任 | contact lapel pin factory | 跳询价页 |
+| legal/privacy-policy.html | 合规与信任 | 无 | 无 |
 | 404.html | 留住误入流量 | 无 | 跳首页 |
 
-### 2.2 bulk-order-guide.html 内容大纲
+### 2.2 guides/bulk-order-guide.html 内容大纲
 
 长尾 SEO 价值来自真实的采购流程知识，页面不出现任何金额、单价、阶梯价、"起订量"门槛。
 
@@ -190,19 +225,19 @@
 | 主词 | 页面 | 支撑词（该页可覆盖） |
 |---|---|---|
 | custom lapel pins wholesale | index.html | lapel pin manufacturer, bulk enamel pins, enamel pin supplier |
-| wholesale custom enamel pins | wholesale-custom-pins.html | hard enamel pin, soft enamel pin, die struck pin |
-| wholesale custom challenge coins | custom-metal-swag.html | custom medals, metal keychains, belt buckles |
-| bulk order lapel pins | bulk-order-guide.html | how to order in bulk, bulk lapel pin order process, bulk pin order guide |
-| china lapel pin factory | china-pin-factory.html | OEM lapel pin manufacturer, factory direct pins, custom pin manufacturer china |
-| custom lapel pin quote | wholesale-quote.html | get lapel pin quote, lapel pin supplier quote, request pin quote |
-| how to order custom lapel pins from china | blog-how-to-order-custom-lapel-pins-from-china.html | import lapel pins, China pin supplier, sourcing pins from china |
-| hard enamel vs soft enamel pins | blog-hard-enamel-vs-soft-enamel-pins.html | cloisonne vs soft enamel, enamel finish comparison |
-| lapel pin sizes | blog-lapel-pin-sizes-guide.html | lapel pin size chart, lapel pin dimensions |
-| custom challenge coin sizes | blog-custom-challenge-coin-sizes-guide.html | challenge coin diameter chart, coin thickness |
-| custom metal badges | custom-metal-badges.html | service badges, shield badges, organisation badges |
-| custom lapel pin samples | samples.html | lapel pin sample order, prototype sample, sample kit finishes |
-| lapel pin faq | faq.html | enamel pin questions, custom pin minimum order, pin lead time |
-| contact lapel pin factory | contact.html | contact china pin supplier, kunshan pin factory contact |
+| wholesale custom enamel pins | products/custom-enamel-pins.html | hard enamel pin, soft enamel pin, die struck pin |
+| wholesale custom challenge coins | products/custom-metal-swag.html | custom medals, metal keychains, belt buckles |
+| bulk order lapel pins | guides/bulk-order-guide.html | how to order in bulk, bulk lapel pin order process, bulk pin order guide |
+| china lapel pin factory | company/factory.html | OEM lapel pin manufacturer, factory direct pins, custom pin manufacturer china |
+| custom lapel pin quote | products/request-a-quote.html | get lapel pin quote, lapel pin supplier quote, request pin quote |
+| how to order custom lapel pins from china | blog/how-to-order-custom-lapel-pins-from-china.html | import lapel pins, China pin supplier, sourcing pins from china |
+| hard enamel vs soft enamel pins | blog/hard-enamel-vs-soft-enamel-pins.html | cloisonne vs soft enamel, enamel finish comparison |
+| lapel pin sizes | blog/lapel-pin-sizes-guide.html | lapel pin size chart, lapel pin dimensions |
+| custom challenge coin sizes | blog/custom-challenge-coin-sizes-guide.html | challenge coin diameter chart, coin thickness |
+| custom metal badges | products/custom-metal-badges.html | service badges, shield badges, organisation badges |
+| custom lapel pin samples | products/samples.html | lapel pin sample order, prototype sample, sample kit finishes |
+| lapel pin faq | guides/faq.html | enamel pin questions, custom pin minimum order, pin lead time |
+| contact lapel pin factory | company/contact.html | contact china pin supplier, kunshan pin factory contact |
 
 四篇文章互相不抢词，每篇都往品类页、批量下单指南与询价页导流。
 
@@ -213,20 +248,21 @@
 ## 四、内链枢纽
 
 ```
-                    index.html
+                          index.html
         ┌───────────┼───────────┬────────────┐
         ▼           ▼           ▼            ▼
    品类页       金属周边页   批量下单指南    工厂页
+   products/    products/    guides/       company/
         │           │           │            │
         └───────────┴─────┬─────┘            │
                           ▼                  │
-                       blog.html             │
+                     blog/index.html        │
                           │                  │
               文章 ×4 ─────┴──────────────────┘
              （每篇 → 品类页 / 批量下单指南 / 询价页，3 条内链起步）
 
-                     wholesale-quote.html
-                    （全站唯一转化落地页，被以上所有节点指向）
+                  products/request-a-quote.html
+                 （全站唯一转化落地页，被以上所有节点指向）
 ```
 
 规则：
@@ -235,7 +271,7 @@
 2. 文章正文里出现的品类词必须链到对应品类页，**不做锚文本堆砌**，用自然句做锚。
 3. 面包屑只在子页出现，首页不出现（首页本身就是根）。
 4. 批量下单指南是第二强承接页，至少被首页、文章、品类页各链一次。
-5. 每页页脚固定"批量下单指南 + 询价"双 CTA，链接到 `bulk-order-guide.html` 与 `wholesale-quote.html`。
+5. 每页页脚固定"批量下单指南 + 询价"双 CTA，链接到 `guides/bulk-order-guide.html` 与 `products/request-a-quote.html`。
 
 ---
 
@@ -275,14 +311,14 @@
 | 页面 | Schema 类型 |
 |---|---|
 | index.html | `Organization` + `WebSite` + `WebPage` + `ItemList` + `FAQPage` + `HowTo`（下单流程） |
-| wholesale-custom-pins.html | `BreadcrumbList` + `ItemList` + `Product` × 5（只写材质、尺寸、工艺属性） |
-| custom-metal-swag.html | `BreadcrumbList` + `ItemList` + `Product` × 6（只写材质、尺寸、工艺属性） |
-| bulk-order-guide.html | `BreadcrumbList` + `Service` + `OfferCatalog`（catalog 只列服务项目，不带金额） |
-| china-pin-factory.html | `BreadcrumbList` + `Organization` + `LocalBusiness`（geo 坐标） |
-| wholesale-quote.html | `BreadcrumbList` + `ContactPage` + `Service` + `OfferCatalog`（服务项，无金额） |
-| blog.html | `BreadcrumbList` + `Blog` + `ItemList` |
+| products/custom-enamel-pins.html | `BreadcrumbList` + `ItemList` + `Product` × 5（只写材质、尺寸、工艺属性） |
+| products/custom-metal-swag.html | `BreadcrumbList` + `ItemList` + `Product` × 6（只写材质、尺寸、工艺属性） |
+| guides/bulk-order-guide.html | `BreadcrumbList` + `Service` + `OfferCatalog`（catalog 只列服务项目，不带金额） |
+| company/factory.html | `BreadcrumbList` + `Organization` + `LocalBusiness`（geo 坐标） |
+| products/request-a-quote.html | `BreadcrumbList` + `ContactPage` + `Service` + `OfferCatalog`（服务项，无金额） |
+| blog/index.html | `BreadcrumbList` + `Blog` + `ItemList` |
 | 文章页 | `BlogPosting` + `BreadcrumbList` + `FAQPage`（有 FAQ 段落的文章） |
-| privacy-policy.html | `WebPage` + `BreadcrumbList` |
+| legal/privacy-policy.html | `WebPage` + `BreadcrumbList` |
 | 404.html | `WebPage` + `noindex` |
 
 **OfferCatalog 的正确用法**（替代被删掉的价格表）：
@@ -399,8 +435,8 @@
 | 浮动咨询条 | 右下角 | WhatsApp + 邮件，桌面端常驻 |
 | 移动端吸底条 | 底部 | WhatsApp / 邮件 / 询价三按钮，中国出口站标配 |
 | 规格速配器 Spec Builder | index.html | 选工艺 × 尺寸 × 数量，输出推荐交期 / 开模费是否免除 / 建议包装 / 工艺说明 / 预计生产排期，全站零金额输出，卡片底部内嵌询价表单，提交后原地返回结果，不跳转页面 |
-| 数量档位与排期表 | bulk-order-guide.html | 数量区间对应的排期影响、包装建议、打样安排，无金额 |
-| RFQ 表单 | wholesale-quote.html | 10 个字段（必填 5 + 选填 5），带成功态 |
+| 数量档位与排期表 | guides/bulk-order-guide.html | 数量区间对应的排期影响、包装建议、打样安排，无金额 |
+| RFQ 表单 | products/request-a-quote.html | 10 个字段（必填 5 + 选填 5），带成功态 |
 | 主题切换器 | index.html 右下角 | 仅评审期启用，上线前移除 |
 
 ### 8.1 规格速配器（Spec Builder）
@@ -419,9 +455,9 @@
 | 工艺说明 | 该工艺的成型方式、常见尺寸区间、耐久特性 |
 | 预计生产排期 | 打样确认 → 开模 → 大货 → 检验 → 包装的时间段 |
 
-**提交询价（原地，不跳转）**：卡片底部内嵌 Web3Forms 表单 —— 姓名、邮箱、公司三个可见字段，加工艺、尺寸、数量、表面处理、留言五个隐藏字段。点击 "Send this spec for a quote" 不离开当前页面，fetch 提交到 `https://api.web3forms.com/submit`，成功与失败都在原地提示。提交成功后 `form.reset()` 会清空隐藏字段，由 `renderSpec()` 重新写回当前规格，重复提交不丢规格。需要更长说明（预算、交期）时，卡片底部保留 "Open the full quote form" 入口跳到 `wholesale-quote.html`。
+**提交询价（原地，不跳转）**：卡片底部内嵌 Web3Forms 表单 —— 姓名、邮箱、公司三个可见字段，加工艺、尺寸、数量、表面处理、留言五个隐藏字段。点击 "Send this spec for a quote" 不离开当前页面，fetch 提交到 `https://api.web3forms.com/submit`，成功与失败都在原地提示。提交成功后 `form.reset()` 会清空隐藏字段，由 `renderSpec()` 重新写回当前规格，重复提交不丢规格。需要更长说明（预算、交期）时，卡片底部保留 "Open the full quote form" 入口跳到 `products/request-a-quote.html`。
 
-**Query 预填仍保留**：`wholesale-custom-pins.html` 等产品页继续用 `wholesale-quote.html?process=...&size=...&qty=...&finish=...` 直接跳询价页并自动预填，首页不再走这条链路。
+**Query 预填仍保留**：`products/custom-enamel-pins.html` 等产品页继续用 `products/request-a-quote.html?process=...&size=...&qty=...&finish=...` 直接跳询价页并自动预填，首页不再走这条链路。
 
 ### 8.2 RFQ 表单字段（bulk 询价页）
 
@@ -642,8 +678,8 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 **Phase 2 · 页面**
 
 5. 重写 5 个现有页面（修 SEO 硬伤 + 换新设计 + 换真图 + 注入工厂硬数据）
-6. 新建 `bulk-order-guide.html`、`blog.html`、`privacy-policy.html`、`404.html`
-7. 组装 4 篇文章（2 篇改名：`blog-lapel-pin-sizes-guide.html`、`blog-custom-challenge-coin-sizes-guide.html`），全文清除价格表述
+6. 新建 `guides/bulk-order-guide.html`、`blog/index.html`、`legal/privacy-policy.html`、`404.html`
+7. 组装 4 篇文章（2 篇改名：`blog/lapel-pin-sizes-guide.html`、`blog/custom-challenge-coin-sizes-guide.html`），全文清除价格表述
 8. 首页落地规格速配器与"配置带入询价表单"链路，询价页落地 query 预填与成功态
 
 **Phase 3 · 内容与数据校验**

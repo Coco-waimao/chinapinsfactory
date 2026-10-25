@@ -39,6 +39,31 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
+  <script>
+    /* 404 页可能被请求在任意路径上（例如 /products/typo.html）。此时页面里的
+       相对路径会解析到 /products/assets/... 这类不存在的目录，样式和链接全断。
+       线上站点位于域名根目录，所以把相对引用补成根绝对路径；
+       本地 file:// 直接打开 404.html 时保持相对路径即可。 */
+    (function () {
+      var onWeb = window.location.origin && window.location.origin !== 'null';
+      if (!onWeb || window.location.pathname.indexOf('/', 1) < 0) { return; }
+      var absolute = function (v) {
+        return v && v.charAt(0) !== '/' &&
+          !/^(https?:|mailto:|tel:|data:|javascript:|#)/.test(v) ? '/' + v : v;
+      };
+      var css = document.querySelector('link[rel="stylesheet"][href^="assets"]');
+      if (css) { css.setAttribute('href', absolute(css.getAttribute('href'))); }
+      document.addEventListener('DOMContentLoaded', function () {
+        Array.prototype.forEach.call(document.querySelectorAll('[href],[src]'), function (el) {
+          ['href', 'src'].forEach(function (attr) {
+            var v = el.getAttribute(attr);
+            if (v) { el.setAttribute(attr, absolute(v)); }
+          });
+        });
+      });
+    })();
+  </script>
+
   <script>try{var s=localStorage.getItem('cpf-skin');if(s)document.documentElement.setAttribute('data-theme',s);}catch(e){}</script>
   <script type="application/ld+json">
   {
@@ -54,6 +79,39 @@
     },
     "inLanguage": "en"
   }
+  </script>
+  <script>
+    /* 旧 URL -> 新 URL 的兜底跳转。
+       改版前是扁平结构，旧的裸链接仍可能从外部或书签进来。GitHub Pages 用
+       /404.html 承接不存在的路径，这里按路径表把旧地址直接送回新地址。
+       脚本必须内联：404 页会在任意路径下被服务，外链脚本会因相对路径
+       解析到不存在的目录而加载失败。真正的 301 由 Cloudflare 的 Bulk
+       Redirect 规则负责，这里只是不留死链。 */
+    (function () {
+      var LEGACY = {
+      '/wholesale-custom-pins.html': '/products/custom-enamel-pins.html',
+      '/custom-metal-swag.html': '/products/custom-metal-swag.html',
+      '/custom-metal-badges.html': '/products/custom-metal-badges.html',
+      '/samples.html': '/products/samples.html',
+      '/wholesale-quote.html': '/products/request-a-quote.html',
+      '/bulk-order-guide.html': '/guides/bulk-order-guide.html',
+      '/faq.html': '/guides/faq.html',
+      '/china-pin-factory.html': '/company/factory.html',
+      '/contact.html': '/company/contact.html',
+      '/blog.html': '/blog/',
+      '/blog-how-to-order-custom-lapel-pins-from-china.html': '/blog/how-to-order-custom-lapel-pins-from-china.html',
+      '/blog-hard-enamel-vs-soft-enamel-pins.html': '/blog/hard-enamel-vs-soft-enamel-pins.html',
+      '/blog-lapel-pin-sizes-guide.html': '/blog/lapel-pin-sizes-guide.html',
+      '/blog-custom-challenge-coin-sizes-guide.html': '/blog/custom-challenge-coin-sizes-guide.html',
+      '/privacy-policy.html': '/legal/privacy-policy.html',
+      '/custom-metal-swag': '/products/custom-metal-swag.html',
+      '/wholesale-custom-pins': '/products/custom-enamel-pins.html',
+      };
+      var target = LEGACY[window.location.pathname];
+      if (target) {
+        window.location.replace(target + window.location.search);
+      }
+    })();
   </script>
 </head>
 <body>
@@ -89,17 +147,17 @@
 
       <nav class="nav" id="mainNav" aria-label="Primary">
         <ul class="nav__list">
-          <li><a href="wholesale-custom-pins.html">Custom Pins</a></li>
-          <li><a href="custom-metal-swag.html">Metal Swag</a></li>
-          <li><a href="bulk-order-guide.html">Bulk Order Guide</a></li>
-          <li><a href="china-pin-factory.html">Our Factory</a></li>
-          <li><a href="blog.html">Journal</a></li>
-          <li><a href="wholesale-quote.html">Request a Quote</a></li>
+          <li><a href="products/custom-enamel-pins.html">Custom Pins</a></li>
+          <li><a href="products/custom-metal-swag.html">Metal Swag</a></li>
+          <li><a href="guides/bulk-order-guide.html">Bulk Order Guide</a></li>
+          <li><a href="company/factory.html">Our Factory</a></li>
+          <li><a href="blog/index.html">Journal</a></li>
+          <li><a href="products/request-a-quote.html">Request a Quote</a></li>
         </ul>
       </nav>
 
       <div class="header__cta">
-        <a href="wholesale-quote.html" class="btn btn--primary">Get a Quote</a>
+        <a href="products/request-a-quote.html" class="btn btn--primary">Get a Quote</a>
       </div>
     </div>
   </header>
@@ -116,7 +174,7 @@
         </p>
         <div class="hero__actions">
           <a href="index.html" class="btn btn--primary">Back to the homepage</a>
-          <a href="wholesale-quote.html" class="btn btn--ghost">Request a quote</a>
+          <a href="products/request-a-quote.html" class="btn btn--ghost">Request a quote</a>
         </div>
       </div>
     </section>
@@ -134,7 +192,7 @@
         </div>
 
         <div class="grid grid--3">
-          <a href="wholesale-custom-pins.html" class="card" style="text-decoration:none">
+          <a href="products/custom-enamel-pins.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Custom lapel pins</h3>
               <p class="card__text">
@@ -147,7 +205,7 @@
             </div>
           </a>
 
-          <a href="custom-metal-swag.html" class="card" style="text-decoration:none">
+          <a href="products/custom-metal-swag.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Challenge coins and metal swag</h3>
               <p class="card__text">
@@ -159,7 +217,7 @@
             </div>
           </a>
 
-          <a href="bulk-order-guide.html" class="card" style="text-decoration:none">
+          <a href="guides/bulk-order-guide.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Bulk order guide</h3>
               <p class="card__text">
@@ -172,7 +230,7 @@
             </div>
           </a>
 
-          <a href="china-pin-factory.html" class="card" style="text-decoration:none">
+          <a href="company/factory.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Our factory</h3>
               <p class="card__text">
@@ -185,7 +243,7 @@
             </div>
           </a>
 
-          <a href="blog.html" class="card" style="text-decoration:none">
+          <a href="blog/index.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Factory journal</h3>
               <p class="card__text">
@@ -198,7 +256,7 @@
             </div>
           </a>
 
-          <a href="custom-metal-badges.html" class="card" style="text-decoration:none">
+          <a href="products/custom-metal-badges.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Custom metal badges</h3>
               <p class="card__text">
@@ -211,7 +269,7 @@
             </div>
           </a>
 
-          <a href="samples.html" class="card" style="text-decoration:none">
+          <a href="products/samples.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Samples and prototyping</h3>
               <p class="card__text">
@@ -224,7 +282,7 @@
             </div>
           </a>
 
-          <a href="contact.html" class="card" style="text-decoration:none">
+          <a href="company/contact.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Contact our factory</h3>
               <p class="card__text">
@@ -237,7 +295,7 @@
             </div>
           </a>
 
-          <a href="wholesale-quote.html" class="card" style="text-decoration:none">
+          <a href="products/request-a-quote.html" class="card" style="text-decoration:none">
             <div class="card__body">
               <h3 class="card__title">Request a quotation</h3>
               <p class="card__text">
@@ -300,27 +358,27 @@
         <div>
           <h4 class="footer__title">Products</h4>
           <ul>
-            <li><a href="custom-metal-badges.html">Custom metal badges</a></li>
-            <li><a href="wholesale-custom-pins.html#hard-enamel">Hard enamel pins</a></li>
-            <li><a href="wholesale-custom-pins.html#soft-enamel">Soft enamel pins</a></li>
-            <li><a href="wholesale-custom-pins.html#die-struck">Die struck pins</a></li>
-            <li><a href="wholesale-custom-pins.html#3d-die-cast">3D die cast pins</a></li>
-            <li><a href="custom-metal-swag.html#challenge-coins">Challenge coins</a></li>
-            <li><a href="custom-metal-swag.html#medals">Custom medals</a></li>
+            <li><a href="products/custom-metal-badges.html">Custom metal badges</a></li>
+            <li><a href="products/custom-enamel-pins.html#hard-enamel">Hard enamel pins</a></li>
+            <li><a href="products/custom-enamel-pins.html#soft-enamel">Soft enamel pins</a></li>
+            <li><a href="products/custom-enamel-pins.html#die-struck">Die struck pins</a></li>
+            <li><a href="products/custom-enamel-pins.html#3d-die-cast">3D die cast pins</a></li>
+            <li><a href="products/custom-metal-swag.html#challenge-coins">Challenge coins</a></li>
+            <li><a href="products/custom-metal-swag.html#medals">Custom medals</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="footer__title">Company</h4>
           <ul>
-            <li><a href="china-pin-factory.html">Our factory and QC</a></li>
-            <li><a href="bulk-order-guide.html">Bulk order guide</a></li>
-            <li><a href="samples.html">Samples and prototyping</a></li>
-            <li><a href="blog.html">Factory journal</a></li>
-            <li><a href="faq.html">Frequently asked questions</a></li>
-            <li><a href="contact.html">Contact our factory</a></li>
-            <li><a href="wholesale-quote.html">Request a quote</a></li>
-            <li><a href="privacy-policy.html">Privacy policy</a></li>
+            <li><a href="company/factory.html">Our factory and QC</a></li>
+            <li><a href="guides/bulk-order-guide.html">Bulk order guide</a></li>
+            <li><a href="products/samples.html">Samples and prototyping</a></li>
+            <li><a href="blog/index.html">Factory journal</a></li>
+            <li><a href="guides/faq.html">Frequently asked questions</a></li>
+            <li><a href="company/contact.html">Contact our factory</a></li>
+            <li><a href="products/request-a-quote.html">Request a quote</a></li>
+            <li><a href="legal/privacy-policy.html">Privacy policy</a></li>
           </ul>
         </div>
 
@@ -337,9 +395,9 @@
       <div class="footer__bottom">
         <div>&copy; 2026 China Pins Factory Co., Ltd. Wholesale manufacturing only.</div>
         <div class="footer__legal">
-          <a href="privacy-policy.html">Privacy policy</a>
+          <a href="legal/privacy-policy.html">Privacy policy</a>
           <a href="sitemap.xml">Sitemap</a>
-          <a href="wholesale-quote.html">Request a quote</a>
+          <a href="products/request-a-quote.html">Request a quote</a>
         </div>
       </div>
     </div>
@@ -364,7 +422,7 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="M3 6l9 6.5L21 6"/></svg>
         Email
       </a>
-      <a href="wholesale-quote.html" class="is-primary">Get a quote</a>
+      <a href="products/request-a-quote.html" class="is-primary">Get a quote</a>
     </div>
   </div>
 

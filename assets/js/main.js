@@ -8,6 +8,25 @@
 
   var STORE_KEY = 'cpf-skin';
 
+  /* 站点根路径。页面分布在不同层级的子目录里，但 thank-you.html 固定在根目录，
+     所以用脚本自身的地址反推根路径：.../assets/js/main.js -> .../
+     currentScript 在脚本同步执行期间有效；万一取不到，退回查询 <script> 标签。 */
+  var SITE_ROOT = (function () {
+    var src = '';
+    if (document.currentScript && document.currentScript.src) {
+      src = document.currentScript.src;
+    } else {
+      var tag = document.querySelector('script[src*="assets/js/main.js"]');
+      if (tag) { src = tag.src; }
+    }
+    if (src) { return src.replace(/\/assets\/js\/main\.js(\?.*)?$/, '/'); }
+    if (window.location.origin && window.location.origin !== 'null') {
+      return window.location.origin + '/';
+    }
+    return './';
+  })();
+  var THANK_YOU_URL = SITE_ROOT + 'thank-you.html';
+
   function ready(fn) {
     if (document.readyState !== 'loading') { fn(); }
     else { document.addEventListener('DOMContentLoaded', fn); }
@@ -308,7 +327,7 @@
             if (pair.after) { pair.after(); }
             // 提交成功后进入感谢页。该页只在提交后展示，站内没有任何链接指向它，
             // 因此不写进 sitemap，也标记为 noindex。
-            window.location.href = 'thank-you.html';
+            window.location.href = THANK_YOU_URL;
           } else {
             show(error);
           }
