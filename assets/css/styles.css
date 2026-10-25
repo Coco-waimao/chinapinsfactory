@@ -299,9 +299,18 @@ p { color: var(--text-2); }
   justify-content: space-between;
   gap: 18px;
   min-height: 44px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
-.announce__left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+/* The left group holds six labels. They stay on one line and the contact
+   block on the right gives way first, because the email and the phone are
+   repeated in the footer of every page and in the mobile action bar. */
+.announce__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
 .announce__badge {
   display: inline-block;
   background: var(--accent-600);
@@ -313,8 +322,24 @@ p { color: var(--text-2); }
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 4px;
+  flex: none;
 }
-.announce__right { display: flex; align-items: center; gap: 20px; }
+.announce__left > span:not(.announce__badge) {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.announce__left > span:not(.announce__badge)::before {
+  content: '';
+  flex: none;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent-500);
+  opacity: .85;
+  margin-right: 11px;
+}
+.announce__right { display: flex; align-items: center; gap: 20px; flex: none; }
 .announce a:hover { color: var(--accent-500); }
 
 /* --------------------------------------------------------------------------
@@ -1611,6 +1636,29 @@ p { color: var(--text-2); }
 /* --------------------------------------------------------------------------
    27. Responsive
    -------------------------------------------------------------------------- */
+@media (max-width: 1150px) {
+  /* Six labels need about 700px. Once the contact block would eat into that,
+     the contacts step aside first: the same email and phone sit in the footer
+     of every page and in the mobile action bar. */
+  .announce__right { display: none; }
+}
+
+@media (max-width: 900px) {
+  /* Below this the six labels no longer fit on one line. Rather than stack
+     them into three rows and push the whole page down, the strip scrolls
+     sideways and the bar keeps its 44px height. */
+  .announce__left {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(90deg, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+    padding-right: 24px;
+  }
+  .announce__left::-webkit-scrollbar { display: none; }
+}
+
 @media (max-width: 1100px) {
   .hero {
     display: flex;
@@ -1684,7 +1732,6 @@ p { color: var(--text-2); }
 
 @media (max-width: 640px) {
   .container { padding: 0 18px; }
-  .announce__right { display: none; }
   .hero { padding: 0 0 58px; }
   .hero__media { height: 64vw; min-height: 210px; }
   .hero__inner { padding-top: 40px; }

@@ -464,7 +464,7 @@
 
 | 组件 | 位置 | 说明 |
 |---|---|---|
-| 顶部公告条 | 全站 | No minimum order quantity · 免费 2D/3D CAD 图 12 小时出 · ISO 9001:2015，一句话说清供应商性质 |
+| 顶部公告条 | 全站 | 6 个短标签：Wholesale only（徽章）· 12H Free Proof · 24/7 Customer Support · No Minimum Qty · Factory Direct · Global Shipping。徽章后 5 条用金色圆点分隔。**响应式不变量**：公告条恒为单行 44px；≤1150px 隐藏右侧联系方式（邮箱与电话在每页页脚和移动端吸底条都有），≤900px 左区改为横向滚动并加右端渐隐，绝不换行堆叠 |
 | 页头询价 CTA | 页头右侧 | 所有页面固定 |
 | 浮动咨询条 | 右下角 | WhatsApp + 邮件，桌面端常驻 |
 | 移动端吸底条 | 底部 | WhatsApp / 邮件 / 询价三按钮，中国出口站标配 |
