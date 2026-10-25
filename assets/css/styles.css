@@ -559,16 +559,24 @@ p { color: var(--text-2); }
 /* --------------------------------------------------------------------------
    11. Stats strip
    -------------------------------------------------------------------------- */
+/* Dividers are drawn with an inset shadow on each cell rather than with a
+   1px gap over a tinted container. When the column count does not divide the
+   item count (5 items in 3 columns on a tablet, for example) the leftover
+   grid area then matches the cells instead of showing up as a grey block. */
 .stats {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: var(--line);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
 }
-.stat { background: var(--surface); padding: 30px 24px; text-align: center; }
+.stat {
+  background: var(--surface);
+  padding: 30px 24px;
+  text-align: center;
+  box-shadow: inset -1px -1px 0 var(--line);
+}
 .stat__num {
   font-family: 'Manrope', sans-serif;
   font-size: clamp(1.7rem, 2.6vw, 2.3rem);
@@ -1249,7 +1257,7 @@ p { color: var(--text-2); }
    -------------------------------------------------------------------------- */
 .page-hero {
   background:
-    radial-gradient(120% 120% at 88% 8%, rgba(201, 164, 92, .18), transparent 58%),
+    radial-gradient(120% 120% at 50% 0%, rgba(201, 164, 92, .16), transparent 62%),
     var(--ink-800);
   color: var(--on-dark);
   padding: 76px 0 72px;
@@ -1264,29 +1272,43 @@ p { color: var(--text-2); }
     linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
   background-size: 72px 72px;
-  mask-image: radial-gradient(70% 70% at 20% 40%, #000, transparent);
-  -webkit-mask-image: radial-gradient(70% 70% at 20% 40%, #000, transparent);
+  mask-image: radial-gradient(90% 90% at 50% 36%, #000, transparent);
+  -webkit-mask-image: radial-gradient(90% 90% at 50% 36%, #000, transparent);
   pointer-events: none;
 }
-.page-hero .container { position: relative; z-index: 1; }
+/* Single centred column. A sub-page header is one statement, so it reads as
+   one centred masthead rather than a left-aligned block with a dead right
+   half. The measure is wide enough that short titles stay on one line, and
+   text-wrap:balance keeps the long ones from leaving a stranded last word. */
+.page-hero .container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
 .page-hero h1 {
   color: var(--on-dark);
   font-size: clamp(2rem, 4.2vw, 3.1rem);
-  line-height: 1.1;
+  line-height: 1.12;
   letter-spacing: -.025em;
-  max-width: 20ch;
-  margin-bottom: 20px;
+  max-width: 25ch;
+  margin: 0 auto 20px;
+  text-wrap: balance;
 }
-.page-hero .lede { max-width: 68ch; }
+.page-hero .lede {
+  max-width: 68ch;
+  margin: 0 auto;
+  text-wrap: pretty;
+}
 .page-hero .stats { margin-top: 44px; }
-.page-hero .hero__actions { margin-top: 36px; }
+.page-hero .hero__actions { margin-top: 36px; justify-content: center; }
+.page-hero .post-meta { justify-content: center; }
 
 /* Dark-surface stat strip used inside page heroes */
 .stats--dark {
-  background: var(--line-dark);
+  background: transparent;
   border-color: var(--line-dark);
 }
-.stats--dark .stat { background: transparent; }
+.stats--dark .stat { background: transparent; box-shadow: inset -1px -1px 0 var(--line-dark); }
 .stats--dark .stat__num { color: var(--accent-500); }
 .stats--dark .stat__label { color: var(--on-dark-3); }
 
@@ -1625,6 +1647,18 @@ p { color: var(--text-2); }
   .footer__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* Between the full desktop navigation and the mobile hamburger menu there is
+   a band (roughly 860-1024px) where the wordmark, six nav items and the
+   header button no longer fit on one line, and the button was pushed past
+   the right edge of the viewport. The button is the first thing to go: the
+   nav already carries a Request a Quote item and the mobile action bar
+   carries a Get a quote button, so nothing is lost. */
+@media (max-width: 1024px) {
+  .header__cta { display: none; }
+  .nav__list { gap: 16px; }
+  .nav__list a { font-size: .85rem; }
+}
+
 @media (max-width: 860px) {
   .nav__toggle { display: flex; }
   .nav {
@@ -1643,6 +1677,9 @@ p { color: var(--text-2); }
   .header__cta .btn--primary { display: none; }
   .grid--3 { grid-template-columns: repeat(2, 1fr); }
   .section { padding: 68px 0; }
+  /* Five stat cells below 860px squeeze the value onto two lines and push the
+     label out of alignment with its neighbours. Three columns keep them even. */
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 640px) {
@@ -1660,7 +1697,10 @@ p { color: var(--text-2); }
   }
   .hero__badge strong { font-size: 1.2rem; }
   .hero__badge span { font-size: .74rem; }
-  .stats { grid-template-columns: repeat(2, 1fr); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Two columns on a phone leaves little room inside each cell, so trim the
+     padding and keep every value on one line. */
+  .stat { padding: 24px 14px; }
   .grid--2, .grid--3, .grid--4, .grid--5, .steps { grid-template-columns: minmax(0, 1fr); }
   .form__grid { grid-template-columns: minmax(0, 1fr); }
   .builder__form, .builder__out { padding: 26px 22px; }

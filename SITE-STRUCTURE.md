@@ -174,6 +174,40 @@
 | `/blog-custom-challenge-coin-sizes-guide.html` | `/blog/custom-challenge-coin-sizes-guide.html` |
 | `/privacy-policy.html` | `/legal/privacy-policy.html` |
 
+### 2.0.2 2026-10-25 子页 hero 改为单栏居中
+
+**改动前的问题**：`.page-hero h1` 上有 `max-width: 20ch`。`ch` 是"0"字符的宽度，h1 字号在 1440px 视口下是 49.6px，20ch 只有 668px——这是给窄栏设计的行宽约束，却被套在了 1232px 宽的容器上。后果有两个：标题被强行折行（"Notes from the workshop floor" 733px 放不下，"floor" 孤零零掉到第二行），加上 `.lede` 的 68ch = 741px，容器右边界 1336px 处**空出 491px，占可用宽度的 40%**。`.page-hero::after` 的网格纹理又用 `mask-image: radial-gradient(70% 70% at 20% 40%)` 锚在左侧 20%，往右直接淡出，所以右半边连纹理都没有，只剩背景上那一小块金色辉光。
+
+**改成什么**：子页 hero 改为**单栏居中**。
+
+- `.page-hero .container` 加 `text-align: center`；h1 改 `max-width: 25ch`（≈805px），`margin: 0 auto`，加 `text-wrap: balance`。
+- 段落 `max-width: 68ch` 居中 + `text-wrap: pretty`；`.hero__actions`、`.post-meta` 改 `justify-content: center`。
+- 背景辉光从 `at 88% 8%` 移到 `at 50% 0%`，网格纹理的 mask 锚点从 `20% 40%` 移到 `50% 36%`，左右对称。
+
+**为什么不加右栏图片**：首页 hero 已经是"左文 + 右侧出血图"的两栏结构（`.hero__media` 绝对定位占 48%），子页是纯文字页，硬塞一张图会与首页抢戏，也会让子页的转化路径（标题→导语→按钮）被视觉噪音打断。单栏居中是"一句话抬头"的正确形态：左右留白对称，看起来是刻意的版式而不是没排满。
+
+**首页保持不变**：`index.html` 的 `.hero` 仍是左文 + 右图的两栏。首页是形象页，子页是陈述页，两者形态不同是合理的区分。
+
+### 2.0.3 2026-10-25 统计条与 404 页的两个修复
+
+**统计条对齐**：`.stats` 是 5 列网格，1440px 下每格内容区只有 197px，而 `.stat__num` 是 36.8px 的展示数字。实测 `7 to 10 business days` 宽 354px，必然折成 3 行，标签比其他格子低 73px，一排数字参差不齐。
+
+- **文案拆分**：把"单位"从数字挪到标签。`7 to 10 business days` → 数字 `7 to 10` + 标签 `Business days, standard production lead time`；`5 business days` → 数字 `5 days` + 标签 `Business days, rush option where a window allows`；`20 to 60 mm` → `20–60 mm`。事实不变，全站两种交期写法也统一了（原先 24 处写 "7 to 10 business days"、2 处写 "7 to 10 days"）。
+- **组件改法**：分隔线不再用 `gap: 1px` + 容器底色，改成每个单元格的 `box-shadow: inset -1px -1px 0`。这样当列数除不尽条目数时（平板 3 列放 5 条），剩下的空格子会和格子底色融为一体，而不是露出一块灰底。
+- **断点**：≤860px 统计条改 3 列（原先是 5 列，数字会被挤到折行）；≤640px 保持 2 列并把单元格内边距从 `30px 24px` 收到 `24px 14px`。
+
+**404 页在 `file://` 下丢样式**：`404.html` 里有一段脚本，在页面被请求到子路径时把相对引用改写成站点根绝对路径。原来的守卫是 `window.location.origin !== 'null'`，但 Chrome 在 `file://` 下返回的是字符串 `"file://"` 而不是 `"null"`，守卫失效，脚本把样式表改写成了 `/assets/css/styles.css`，Windows 上被解析到磁盘根 `C:/assets/...`，整页裸奔。改成按 `location.protocol` 判断协议，并算出真正的 ROOT（`file://` 下取 404.html 所在目录），同时给 `absolute()` 加了 `file:` 前缀和幂等判断，避免二次改写时重复套 ROOT。
+
+**头部在 861–1024px 区间溢出**：全宽导航（6 项）+ wordmark + 头部按钮在 900px 视口下需要 990px，超出 115px，"Get a Quote" 按钮被推出屏幕右缘，产生横向滚动条。加了 `max-width: 1024px` 断点：隐藏 `.header__cta`（导航里本来就有 Request a Quote，移动端吸底条也有 Get a quote），并把导航间距从 26px 收到 16px、字号从 .92rem 收到 .85rem。改完 18 页 × 12 个断点共 216 个组合全部零横向溢出。
+
+### 2.0.4 响应式不变量（改版时的验收线）
+
+以下三条是 2026-10-25 实测 360–1920px 全区间后固化的验收标准，改样式时不要破坏：
+
+1. **统计数字必须单行。** `.stats` 在 ≥1101px 是 5 列，每格内容区只有 198px，`.stat__num` 是 36.8px 的展示数字。数字文本必须控制在 180px 以内（约 12 个窄字符），否则标签会被顶得比邻居低 73px。单位放到标签里（`7 to 10` + `Business days, standard production`）。
+2. **hero 标题的比例稳定。** h1 用 `max-width: 25ch`，ch 随字号缩放，所以在 1440px 占列宽 65%、900px 占 71%、手机占 91%——随视口收放但始终居中，不会出现"某档宽度特别空"。
+3. **任何断点都不能产生横向滚动条。** 用 `document.documentElement.scrollWidth - clientWidth` 判定。表格的 `min-width: 640px` 在 `.table-wrap` 里是安全的滚动容器，不算溢出。
+
 ### 2.0 Thank You 页的规则
 
 `thank-you.html` 是全站唯一一个"没有人会主动点进去"的页面，它只为表单提交后的落地展示服务。三条硬规则：

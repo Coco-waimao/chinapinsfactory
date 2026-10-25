@@ -43,13 +43,22 @@
     /* 404 页可能被请求在任意路径上（例如 /products/typo.html）。此时页面里的
        相对路径会解析到 /products/assets/... 这类不存在的目录，样式和链接全断。
        线上站点位于域名根目录，所以把相对引用补成根绝对路径；
-       本地 file:// 直接打开 404.html 时保持相对路径即可。 */
+       本地 file:// 打开 404.html 时，锚定到 404.html 真正所在的目录。
+       注意：file:// 下 window.location.origin 是 "file://" 而不是 "null"，
+       用 origin 判断协议会误判，必须看 protocol。 */
     (function () {
-      var onWeb = window.location.origin && window.location.origin !== 'null';
-      if (!onWeb || window.location.pathname.indexOf('/', 1) < 0) { return; }
+      var ROOT;
+      if (window.location.protocol === 'file:') {
+        var p = window.location.pathname;
+        ROOT = 'file://' + p.slice(0, p.lastIndexOf('/') + 1);
+      } else {
+        ROOT = window.location.origin + '/';
+      }
       var absolute = function (v) {
-        return v && v.charAt(0) !== '/' &&
-          !/^(https?:|mailto:|tel:|data:|javascript:|#)/.test(v) ? '/' + v : v;
+        if (!v) { return v; }
+        if (/^(https?:|file:|mailto:|tel:|data:|javascript:|#|\/\/)/i.test(v)) { return v; }
+        if (v.indexOf(ROOT) === 0) { return v; }
+        return ROOT + String(v).replace(/^\/+/, '');
       };
       var css = document.querySelector('link[rel="stylesheet"][href^="assets"]');
       if (css) { css.setAttribute('href', absolute(css.getAttribute('href'))); }
