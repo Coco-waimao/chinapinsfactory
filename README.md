@@ -30,6 +30,7 @@ assets/css/styles.css       全站样式
 assets/js/main.js           交互脚本（导航、皮肤切换、速配器、表单提交）
 assets/images/              图片资源（webp + jpg 双格式，含 srcset 尺寸档）
 robots.txt / sitemap.xml    搜索引擎配置
+CNAME                      GitHub Pages 自定义域名（www.chinapinsfactory.com）
 ```
 
 ## 本地预览
@@ -42,18 +43,19 @@ robots.txt / sitemap.xml    搜索引擎配置
 
 以 GitHub Pages 为例：仓库 Settings → Pages → Source 选择 `main` 分支、根目录。
 
-> 若要用 `chinapinsfactory.com` 走 GitHub Pages 自定义域名，需在仓库根目录新增 `CNAME` 文件，内容为域名一行，并在域名 DNS 处配置 CNAME 记录指向 `<用户名>.github.io`。
+> 仓库根目录已有 `CNAME` 文件，内容为 `www.chinapinsfactory.com`，与站内 canonical 域名一致。要让 GitHub Pages 通过这个自定义域名访问，还需在域名 DNS 处配置 CNAME 记录指向 `<用户名>.github.io`（若 DNS 服务商同时要求 A 记录，按 GitHub 提示补上）。
 
 ## 表单
 
 全站四个表单（首页询价、首页规格速配器、询价页、联系页）统一走 [Web3Forms](https://web3forms.com)，提交逻辑集中在 `assets/js/main.js` 的 `forms` 数组。
 
+Web3Forms 的 `access_key` 以隐藏字段形式写在四个表单里（`index.html` 两处、`wholesale-quote.html` 一处、`contact.html` 一处），全站同一个值。更换 key 时四处必须同步改。
+
 提交成功后跳转 `thank-you.html`，失败则原地显示错误提示。
 
-**上线前需要处理的两件事：**
+**上线前需要处理的一件事：**
 
-1. 更换 Web3Forms 的 `access_key`（当前是测试 key，出现在各页面表单的隐藏字段中），并把收件邮箱改到真实业务邮箱。
-2. `SITE-STRUCTURE.md` 第十三章列出了上线前必须替换或确认的数据（联系方式、产能设备、合规声明、交期与打样、起订量表述），请逐项核对后同步修改 HTML、Schema 与 FAQ。
+`SITE-STRUCTURE.md` 第十三章列出了上线前必须替换或确认的数据（联系方式、产能设备、合规声明、交期与打样、起订量表述），请逐项核对后同步修改 HTML、Schema 与 FAQ。
 
 ## 两条硬规则
 
