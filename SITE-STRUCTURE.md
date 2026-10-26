@@ -15,8 +15,8 @@
 | 页面 | 状态 | 主词 | JSON-LD |
 |---|---|---|---|
 | index.html | 已重写 | custom lapel pins wholesale | Organization + WebSite + WebPage + ItemList + HowTo + FAQPage |
-| products/custom-enamel-pins.html | 已重写 | wholesale custom enamel pins | BreadcrumbList + ItemList + Product×5 + FAQPage |
-| products/custom-metal-swag.html | 已重写 | wholesale custom challenge coins | BreadcrumbList + ItemList + Product×6 |
+| products/custom-enamel-pins.html | 已重写 | wholesale custom enamel pins | BreadcrumbList + ItemList + Service×6 + FAQPage |
+| products/custom-metal-swag.html | 已重写 | wholesale custom challenge coins | BreadcrumbList + ItemList + Service×7 |
 | guides/bulk-order-guide.html | 已建 | bulk order lapel pins | BreadcrumbList + Service + OfferCatalog + FAQPage |
 | company/factory.html | 已重写 | china lapel pin factory | BreadcrumbList + Organization + LocalBusiness |
 | products/request-a-quote.html | 已重写 | custom lapel pin quote | BreadcrumbList + ContactPage + Service + OfferCatalog |
@@ -345,8 +345,8 @@
 | 页面 | Schema 类型 |
 |---|---|
 | index.html | `Organization` + `WebSite` + `WebPage` + `ItemList` + `FAQPage` + `HowTo`（下单流程） |
-| products/custom-enamel-pins.html | `BreadcrumbList` + `ItemList` + `Product` × 5（只写材质、尺寸、工艺属性） |
-| products/custom-metal-swag.html | `BreadcrumbList` + `ItemList` + `Product` × 6（只写材质、尺寸、工艺属性） |
+| products/custom-enamel-pins.html | `BreadcrumbList` + `ItemList` + `Service` × 6（1 个页面级 + 5 个工艺段，只写材质、尺寸、工艺属性） |
+| products/custom-metal-swag.html | `BreadcrumbList` + `ItemList` + `Service` × 7（1 个页面级 + 6 个品类段，只写材质、尺寸、工艺属性） |
 | guides/bulk-order-guide.html | `BreadcrumbList` + `Service` + `OfferCatalog`（catalog 只列服务项目，不带金额） |
 | company/factory.html | `BreadcrumbList` + `Organization` + `LocalBusiness`（geo 坐标） |
 | products/request-a-quote.html | `BreadcrumbList` + `ContactPage` + `Service` + `OfferCatalog`（服务项，无金额） |
@@ -354,6 +354,27 @@
 | 文章页 | `BlogPosting` + `BreadcrumbList` + `FAQPage`（有 FAQ 段落的文章） |
 | legal/privacy-policy.html | `WebPage` + `BreadcrumbList` |
 | 404.html | `WebPage` + `noindex` |
+
+**为什么用 `Service` 而不是 `Product`**（2026-10-26 修正）：
+
+Search Console 报过一条严重错误「应指定 offers、review 或 aggregateRating」。根因是这两个页面各有 5 个和 6 个 `Product` 节点，而它们描述的是**工艺板块**（hard enamel、die struck、challenge coins……），不是可直接下单的商品条目，所以既没有 `offers` 也没有 `review`。
+
+本站**不公布价格、不采集评价**，编造 `offers` 或 `aggregateRating` 属于虚假标注，处罚比缺属性更重，还会和页面正文自相矛盾。Google 对此的官方口径是：无效标记只影响对应富媒体结果的资格，不影响页面收录；不适用商品摘要时应移除 `Product` 标记。
+
+因此这 11 个节点改为 `Service`——这才是它们的实际语义（按图生产的代工服务），也跟 `guides/bulk-order-guide.html` 里对同样五种工艺用 `Service` 的写法一致。属性映射：
+
+| 原 `Product` 属性 | 改为 | 说明 |
+|---|---|---|
+| `@type: Product` | `@type: Service` | |
+| `manufacturer` | `provider` | Service 的规范属性名 |
+| `category` | `serviceType` | Service 的规范属性名 |
+| `material` | 并入 `additionalProperty` | Service 无此属性，不丢弃而是转成 `PropertyValue` |
+| — | 新增 `areaServed` | "Worldwide"，页面可如实声明 |
+| — | 新增 `url` | 指向页内锚点，与 `@id` 一致 |
+
+`name` / `description` / `image` / `brand` / `additionalProperty` 原样保留，所有 `@id` 仍指向同一页面的同一锚点，指向这些板块的站内链接不受影响。
+
+**不变量**：全站不得出现 `Product` / `Offer` / `AggregateOffer` / `Review` 节点——除非站内真的开始公开价格或采集到真实评价。到那时才引入 `Product` + `offers`（价格须与页面可见文字完全一致）或 `aggregateRating`（须是页面上可见的真实评分）。
 
 **OfferCatalog 的正确用法**（替代被删掉的价格表）：
 
@@ -748,6 +769,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 | 起订量表述 | No minimum order quantity | 待用户确认填写 | 与实际接单政策一致，全站统一 |
 | 证言 | 行业结果卡（无虚构人名） | 待用户提供 | 真实评价等客户授权后填写，结构化数据不写评分 |
 | 结构化数据 | `aggregateRating` | 已删除 | 保持删除 |
+| 结构化数据 | `Product` 类型 | 已改为 `Service`（2026-10-26） | Search Console 报严重错误「应指定 offers/review/aggregateRating」。本站无公开价格、无真实评价，编造这三个属性属于虚假标注，处罚更重。11 个 `Product` 节点已改为 `Service`（`manufacturer`→`provider`，`category`→`serviceType`，`material` 并入 `additionalProperty`）。**除非站内真的开始公开价格或采集到真实评价，否则不得再引入 `Product` / `Offer` 节点** |
 | 价格相关内容 | 单价、阶梯价、MOQ、免模门槛 | 已决定全部删除 | 按第九章禁用词清单扫描 |
 
 **域名一旦最终确认，`canonical`、`og:url`、`sitemap.xml`、`robots.txt` 里的绝对 URL 需要全局替换一次。**
