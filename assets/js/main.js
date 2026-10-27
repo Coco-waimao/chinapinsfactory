@@ -42,6 +42,7 @@
       navToggle.addEventListener('click', function () {
         var open = nav.classList.toggle('is-open');
         navToggle.setAttribute('aria-expanded', String(open));
+        if (!open) { closeAllGroups(); }
       });
       nav.addEventListener('click', function (e) {
         if (e.target.tagName === 'A') {
@@ -50,6 +51,87 @@
         }
       });
     }
+
+    /* ------------------------------------------------------- 1b. Dropdown menus
+       The desktop menu opens on hover and on keyboard focus, both handled in
+       CSS. The caret button is the touch equivalent: it toggles the same
+       panel and keeps aria-expanded in step. On a phone the menu is a
+       vertical drawer, so the same button turns the group into an
+       accordion.
+
+       Every parent entry is also a real link to the directory hub, so the
+       pages stay reachable when this script does not run. */
+    var groups = nav ? nav.querySelectorAll('.nav__item--group') : [];
+
+    function closeGroup(group) {
+      group.classList.remove('is-open');
+      group.classList.remove('is-closed');
+      var caret = group.querySelector('.nav__caret');
+      if (caret) { caret.setAttribute('aria-expanded', 'false'); }
+    }
+
+    function closeAllGroups() {
+      groups.forEach(closeGroup);
+    }
+
+    function panelVisible(group) {
+      var menu = group.querySelector('.nav__menu');
+      if (!menu) { return false; }
+      var style = window.getComputedStyle(menu);
+      return style.display !== 'none' && style.visibility === 'visible';
+    }
+
+    groups.forEach(function (group) {
+      var caret = group.querySelector('.nav__caret');
+      if (!caret) { return; }
+
+      caret.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        /* The state is read from the panel itself rather than from a class.
+           On a mouse device the panel may already be open because the pointer
+           is over it, and pressing the caret then has to close it. */
+        var open = !panelVisible(group);
+
+        groups.forEach(function (other) {
+          if (other !== group) { closeGroup(other); }
+        });
+
+        group.classList.toggle('is-open', open);
+        group.classList.toggle('is-closed', !open);
+        caret.setAttribute('aria-expanded', String(open));
+      });
+
+      /* Leaving the group ends every explicit state, so the panel goes back
+         to following the pointer. */
+      group.addEventListener('mouseleave', function () {
+        group.classList.remove('is-open');
+        group.classList.remove('is-closed');
+        var btn = group.querySelector('.nav__caret');
+        if (btn) { btn.setAttribute('aria-expanded', 'false'); }
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!nav || nav.contains(e.target)) { return; }
+      closeAllGroups();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || !nav) { return; }
+      var opened = null;
+      groups.forEach(function (group) {
+        if (group.classList.contains('is-open')) { opened = group; }
+        closeGroup(group);
+      });
+      if (opened) {
+        var caret = opened.querySelector('.nav__caret');
+        var parent = opened.querySelector('.nav__link--parent');
+        if (caret) { caret.focus(); }
+        else if (parent) { parent.focus(); }
+      }
+    });
 
     /* ------------------------------------------------------- 2. Skin switcher */
     var skin = document.getElementById('skinSwitcher');

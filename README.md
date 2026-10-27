@@ -78,7 +78,7 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 
 安装后 `pre-commit` 和 `pre-push` 会自动执行检查，**不通过就拦住提交和推送**，报错直接显示在终端。
 
-检查覆盖 9 项：
+检查覆盖 11 项：
 
 | # | 检查项 | 拦截什么 |
 |---|---|---|
@@ -91,16 +91,28 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 | 7 | 机器层 | sitemap / feed / llms.txt 三者互相不一致，页面漏进 sitemap |
 | 8 | 可达性 | 存在从首页无法到达的孤岛页；目录 hub 入链不足 |
 | 9 | 面包屑 | 目录页缺少层级，或目录项没链到对应 hub |
-| 10 | 导航 | 导航项与固定的 5 项不一致，重复的询价入口，当前项多于一个 |
+| 10 | 导航 | 导航链接集合与全站不一致，重复的询价入口，当前项多于一个 |
 | 11 | 行尾 | 单个文件的 CRLF/LF 被意外翻转（会造成巨大无意义 diff） |
 
 第 8 项的原理是：每个页面都必须在链接图上从 `index.html` 可达。`404.html` 与 `thank-you.html` 是仅有的两个例外（前者由服务器兜底，后者由脚本跳转），脚本已按预期处理。
 
-第 9 项对应站点的层级约定：**导航 = 买家意图直达（5 项平铺），面包屑 = 目录层级，页脚 = 平铺实用链接。** 子页面包屑形如 `Home / Products / Custom Pins`，其中 `Products` 是可点链接，指向 `products/index.html`；目录页自身显示 `Home / Products`，`Products` 为当前项。目录入口不走页脚——页脚三列装的是具体工艺与杂项链接，塞进目录节点会打乱层级。
+第 9 项对应站点的层级约定：**导航 = 买家意图直达（3 个下拉组 + 1 个平铺项），面包屑 = 目录层级，页脚 = 平铺实用链接。** 子页面包屑形如 `Home / Products / Custom Pins`，其中 `Products` 是可点链接，指向 `products/index.html`；目录页自身显示 `Home / Products`，`Products` 为当前项。目录入口不走页脚——页脚三列装的是具体工艺与杂项链接，塞进目录节点会打乱层级。
 
-第 10 项：导航固定为 `Custom Pins | Metal Swag | Guides | Our Factory | Journal` 五项。`Guides` 指向 `guides/index.html` 目录中枢页（按买家任务组织的 4 篇指南），询价入口只有页头 `Get a Quote` 按钮和移动端吸底条两处，导航里不再重复放第三个。
+第 10 项：导航固定为 `Products | Guides | Our Factory | Journal` 四项顶级，其中前三项各挂一个下拉组（Products 4 个二级、Guides 4 个二级、Our Factory 2 个二级），`Journal` 保持平铺。校验方式不是比对文本，而是把每页 nav 块里的链接归一化成仓库相对路径后比对集合，确保全站一致。每个下拉组的父项本身就是通往目录中枢的真实链接（`products/index.html` / `guides/index.html` / `company/index.html`），脚本不运行时二级页面照样可达。询价入口只有页头 `Get a Quote` 按钮、移动端吸底条与各页语境 CTA，导航里不再重复放。
 
 配套的可达性明细可以用 `python scripts/reachability.py` 查看，它会列出每个页面的入链数、出链数、距首页的层级，以及三个目录中枢页各自被哪些页面链接。
+
+## 导航维护
+
+导航的唯一来源是 `scripts/nav_sync.py`。**不要手改单个页面的 nav 块**，23 页手改必然漂移，提交前检查会拦下来。
+
+```bash
+python scripts/nav_sync.py           # 按菜单模型批量重写 23 页导航
+python scripts/nav_sync.py --check   # 只报告差异，不落盘
+python scripts/nav_responsive.py     # 无头浏览器实测：10 页 × 9 断点 = 90 组合
+```
+
+增删二级项只改 `scripts/nav_sync.py` 里的 `NAV_GROUPS` / `NAV_FLAT`，然后跑一次重写。`nav_responsive.py` 会检查横向溢出、导航与页头按钮的可见性、面包屑高度是否恒定、下拉面板是否越界、移动端手风琴是否真的展开。改完导航结构跑一次。
 
 ## 部署
 

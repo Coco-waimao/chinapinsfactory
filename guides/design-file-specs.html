@@ -139,11 +139,37 @@
 
       <nav class="nav" id="mainNav" aria-label="Primary">
         <ul class="nav__list">
-          <li><a href="../products/custom-enamel-pins.html">Custom Pins</a></li>
-          <li><a href="../products/custom-metal-swag.html">Metal Swag</a></li>
-          <li class="is-active"><a href="index.html" aria-current="page">Guides</a></li>
-          <li><a href="../company/factory.html">Our Factory</a></li>
-          <li><a href="../blog/index.html">Journal</a></li>
+          <li class="nav__item nav__item--group">
+            <a class="nav__link nav__link--parent" href="../products/index.html">Products</a>
+            <button class="nav__caret" type="button" aria-expanded="false" aria-controls="nav-menu-products" aria-label="Toggle the Products submenu"><span class="nav__caret-icon" aria-hidden="true"></span></button>
+            <ul class="nav__menu" id="nav-menu-products">
+              <li><a class="nav__sublink" href="../products/custom-enamel-pins.html">Custom enamel pins</a></li>
+              <li><a class="nav__sublink" href="../products/custom-metal-swag.html">Challenge coins, medals and swag</a></li>
+              <li><a class="nav__sublink" href="../products/custom-metal-badges.html">Custom metal badges</a></li>
+              <li><a class="nav__sublink" href="../products/samples.html">Samples and prototyping</a></li>
+            </ul>
+          </li>
+          <li class="nav__item nav__item--group is-active">
+            <a class="nav__link nav__link--parent" href="index.html">Guides</a>
+            <button class="nav__caret" type="button" aria-expanded="false" aria-controls="nav-menu-guides" aria-label="Toggle the Guides submenu"><span class="nav__caret-icon" aria-hidden="true"></span></button>
+            <ul class="nav__menu" id="nav-menu-guides">
+              <li><a class="nav__sublink" href="bulk-order-guide.html">How to order in bulk from China</a></li>
+              <li><a class="nav__sublink" href="design-file-specs.html" aria-current="page">Design file specifications</a></li>
+              <li><a class="nav__sublink" href="process-comparison.html">Five processes, side by side</a></li>
+              <li><a class="nav__sublink" href="faq.html">Frequently asked questions</a></li>
+            </ul>
+          </li>
+          <li class="nav__item nav__item--group nav__item--edge">
+            <a class="nav__link nav__link--parent" href="../company/index.html">Our Factory</a>
+            <button class="nav__caret" type="button" aria-expanded="false" aria-controls="nav-menu-company" aria-label="Toggle the Our Factory submenu"><span class="nav__caret-icon" aria-hidden="true"></span></button>
+            <ul class="nav__menu" id="nav-menu-company">
+              <li><a class="nav__sublink" href="../company/factory.html">Our factory and quality control</a></li>
+              <li><a class="nav__sublink" href="../company/contact.html">Contact our export desk</a></li>
+            </ul>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="../blog/index.html">Journal</a>
+          </li>
         </ul>
       </nav>
 

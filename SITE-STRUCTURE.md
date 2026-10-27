@@ -214,6 +214,51 @@
 1. **统计数字必须单行。** `.stats` 在 ≥1101px 是 5 列，每格内容区只有 198px，`.stat__num` 是 36.8px 的展示数字。数字文本必须控制在 180px 以内（约 12 个窄字符），否则标签会被顶得比邻居低 73px。单位放到标签里（`7 to 10` + `Business days, standard production`）。
 2. **hero 标题的比例稳定。** h1 用 `max-width: 25ch`，ch 随字号缩放，所以在 1440px 占列宽 65%、900px 占 71%、手机占 91%——随视口收放但始终居中，不会出现"某档宽度特别空"。
 3. **任何断点都不能产生横向滚动条。** 用 `document.documentElement.scrollWidth - clientWidth` 判定。表格的 `min-width: 640px` 在 `.table-wrap` 里是安全的滚动容器，不算溢出。
+4. **页头询价按钮的下断点是 880px，隐藏时必须保留占位。** 2026-10-27 实测：三个 caret 全部显示（触屏指针，hover 不存在）时，字标、导航、按钮三者在 871px 以上仍能并排不重叠，所以按钮可以一直显示到 880px。但隐藏时不能用 `display: none`，只能用 `visibility: hidden`：一旦按钮彻底离开布局，`justify-content: space-between` 会把导航推到视口右缘，230px 宽的 Guides 下拉面板就会超出屏幕 1px，整页出现横向滚动。改导航结构后重跑 `python scripts/nav_responsive.py`，它会同时验这三条。
+
+### 2.0.5 导航三层结构与下拉分组（2026-10-27 定案）
+
+**三层各司其职，不重复。**
+
+| 层 | 装什么 | 当前内容 |
+|---|---|---|
+| 导航 | 买家意图直达 | 4 个顶级项 + 10 个二级项 |
+| 面包屑 | 目录层级 | `Home / 目录 / 当前页` |
+| 页脚 | 平铺实用链接 | 23 页完全一致，无目录项 |
+
+**导航结构**
+
+```
+导航        Products            Guides                 Our Factory      Journal
+            4 个二级项          4 个二级项             2 个二级项         平铺，无二级
+            ├ Custom enamel pins        ├ How to order in bulk from China
+            ├ Challenge coins, medals and swag  ├ Design file specifications
+            ├ Custom metal badges       ├ Five processes, side by side
+            └ Samples and prototyping    └ Frequently asked questions
+                                         ├ Our factory and quality control
+                                         └ Contact our export desk
+```
+
+**四条定案规则**
+
+1. **顶级项是意图，不是目录。** 三个下拉组的父项本身就是通往目录中枢的真实 `<a>`（`products/index.html` / `guides/index.html` / `company/index.html`），所以脚本不运行时二级页面照样可达，父项链接不空。
+2. **Journal 保持平铺。** 入口层稳态不增长：每加一篇新文章就往导航里加一项，导航会退化成文章列表。文章级入口由 `blog/index.html` 聚合页承担，导航只留一个指向聚合页的入口。
+3. **二级项不进页脚。** 目录层级只出现在面包屑里。页脚三列装的是具体工艺与杂项链接，塞进目录节点会打乱层级。
+4. **不重复同一功能的入口。** 导航项与紧邻的 CTA 按钮都指向 `request-a-quote.html` 就是重复。询价入口全站只有页头 `Get a Quote` 按钮、移动端吸底条与各页语境 CTA 三类。
+
+**当前项标记规则**
+
+- 目录组里的任意页面（hub 或二级项）→ 该组 `<li>` 加 `is-active`
+- 当前页恰好是 hub → 父 `<a>` 加 `aria-current="page"`
+- 当前页是某个二级项 → 该 sublink 加 `aria-current="page"`
+- 全页 `is-active` 至多 1 个、`aria-current` 至多 1 个（`scripts/check.py` 强制）
+
+**降级与无障碍**
+
+- 父项是真链接，`<button class="nav__caret">` 只负责展开，`aria-expanded` 与展开状态同步
+- 桌面端 `hover` / `focus-within` / `.is-open` 三态叠加，`:focus-within` 保证纯键盘 Tab 也能展开
+- 移动端（≤860px）导航变竖排抽屉，下拉降级为手风琴。**这是本次改造最大的回归风险点**：hover 在触屏上不存在，触屏用户会一次性丢掉全部 10 个二级入口
+- `Esc` 关闭当前组并把焦点还给 caret，焦点离开导航区自动收起
 
 ### 2.0 Thank You 页的规则
 
@@ -968,3 +1013,33 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
 新增 `scripts/reachability.py` 输出全站链接图明细：每个页面的入链数、出链数、距首页的层级，以及三个目录 hub 各自被哪些页面链接。当前 23 页中 21 页可达，`404.html` 与 `thank-you.html` 按设计例外。
 
+### 15.9 导航下拉改造与新文章落位（2026-10-27）
+
+**改造前的现状**：导航 5 项平铺（Custom Pins / Metal Swag / Guides / Our Factory / Journal），目录中枢页只能靠面包屑和语境按钮进入，`company/index.html` 全站只有 4 个页面直连，入口太浅、层级不清。
+
+**改造后的结构**：三个下拉组（Products / Guides / Our Factory）+ 一个平铺项（Journal），规则见 2.0.5。
+
+| 动作 | 文件 | 性质 |
+|---|---|---|
+| 建导航唯一来源 | `scripts/nav_sync.py` | 新增，定义菜单模型并批量重写 23 页 nav 块 |
+| 下拉样式 | `assets/css/styles.css` | 桌面面板 + 移动手风琴，媒体查询隔离 |
+| 下拉交互 | `assets/js/main.js` | 显式展开状态、`aria-expanded` 同步、`Esc` 关闭 |
+| 改写 23 页导航 | 23 个 HTML | 每页 +36/-5 行，nav 块整段替换 |
+| 导航校验改造 | `scripts/check.py` | 从「硬编码 5 项文本」改为「归一化链接集合全站一致」 |
+| 响应式实测 | `scripts/nav_responsive.py` | 新增，CDP 驱动，10 页 × 9 断点 = 90 组合 |
+| 补机器层目录入口 | `llms.txt` | 新增 `## Directories` 段，列 4 个目录 hub |
+| 修页头断点 | `assets/css/styles.css` | 询价按钮断点 1000px → 880px，隐藏改为保留占位，顺带修掉 880–1000px 区间 1px 横向溢出 |
+
+**改造后的 hub 入链数**：`products/index.html` 7 → 22，`guides/index.html` 28 → 22，`company/index.html` 4 → 22。三个中枢页入链数现在完全一致，全部来自导航下拉、面包屑与页脚。
+
+**Bulk Order Guide 的进入路径**：`导航 → Guides → How to order in bulk from China`，一步直达，并放在 Guides 下拉第一位（它是 P0 长尾页）。`scripts/check.py` 额外禁止 `request-a-quote` 出现在任何 nav 块内，防止日后回潮。
+
+**以后新写的文章放哪里**
+
+1. 文件落在 `blog/<slug>.html`，与现有 4 篇同目录
+2. 聚合页 `blog/index.html` 收录卡片，并同步 `ItemList` 条目
+3. 机器层：`sitemap.xml`、`feed.xml`、`llms.txt` 各加一条
+4. 上下文层：在 2 个强相关页（品类页或批量下单指南）加内链
+5. **不进导航**。导航只保留 `Journal` 一个入口指向 `blog/index.html`，入口层稳态不增长是硬规则；每加一篇就往导航里塞一项，导航会退化成文章列表，顶级项也会被顶出首屏。
+
+**导航的唯一来源是 `scripts/nav_sync.py`。** 要增删二级项，改脚本里的 `NAV_GROUPS` / `NAV_FLAT`，然后跑 `python scripts/nav_sync.py` 批量重写 23 页；`--check` 只报告差异不落盘。**不要手改单个页面的 nav 块**，23 页手改必然漂移，`scripts/check.py` 会在提交前把漂移拦下来。

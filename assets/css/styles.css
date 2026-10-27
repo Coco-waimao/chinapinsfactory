@@ -410,7 +410,9 @@ p { color: var(--text-2); }
 .nav__toggle span::after { top: 5px; }
 
 .nav__list { display: flex; align-items: center; gap: 26px; }
-.nav__list a {
+.nav__list > li { position: relative; }
+
+.nav__link {
   font-size: .92rem;
   font-weight: 600;
   color: var(--text);
@@ -418,15 +420,124 @@ p { color: var(--text-2); }
   position: relative;
   white-space: nowrap;
 }
-.nav__list a::after {
+.nav__link::after {
   content: '';
   position: absolute; left: 0; bottom: 0;
   width: 0; height: 2px;
   background: var(--accent-600);
   transition: width .22s ease;
 }
-.nav__list a:hover, .nav__list a[aria-current="page"] { color: var(--ink-800); }
-.nav__list a:hover::after, .nav__list a[aria-current="page"]::after { width: 100%; }
+.nav__link:hover, .nav__link[aria-current="page"] { color: var(--ink-800); }
+.nav__link:hover::after, .nav__link[aria-current="page"]::after { width: 100%; }
+
+/* A parent entry stays highlighted while one of the pages below it is open,
+   so the buyer can see which section of the site they are inside. */
+.nav__item.is-active > .nav__link { color: var(--ink-800); }
+.nav__item.is-active > .nav__link::after { width: 100%; }
+
+/* The caret opens the submenu on touch screens, where hover does not exist.
+   It sits next to the label instead of inside it, because a button inside an
+   anchor is invalid markup. On a mouse device the caret is hidden, because
+   the pointer opens the menu on its own. */
+.nav__caret {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 1px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+  vertical-align: middle;
+  transition: color .18s ease;
+}
+.nav__caret:hover { color: var(--ink-800); }
+.nav__caret-icon {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform .2s ease;
+}
+.nav__item.is-open > .nav__caret-icon { transform: rotate(-135deg) translate(-1px, -1px); }
+
+/* A device with no pointer cannot hover, so the caret is the only way in. */
+@media (hover: none) {
+  .nav__caret { display: inline-flex; }
+}
+
+.nav__menu {
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+.nav__sublink {
+  display: block;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 8px;
+  white-space: normal;
+}
+.nav__sublink:hover { background: var(--surface-2); color: var(--ink-800); }
+.nav__sublink[aria-current="page"] { background: var(--accent-tint); color: var(--accent-700); }
+
+/* --------------------------------------------------------------------------
+   8.1 Dropdown panel — desktop
+   Above 860px the panel floats under its parent label. It opens on hover
+   and on keyboard focus, both handled in CSS, so the menu still works
+   without the script. The caret adds an explicit open and close on top of
+   that, which is what a touch device needs.
+   -------------------------------------------------------------------------- */
+@media (min-width: 861px) {
+  .nav__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 230px;
+    max-width: min(290px, calc(100vw - 32px));
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+    z-index: 40;
+  }
+  /* Bridges the gap between the label and the panel, so the pointer can
+     travel down from the header into the submenu without it closing. */
+  .nav__menu::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: -10px;
+    height: 10px;
+  }
+  .nav__item--group:hover > .nav__menu,
+  .nav__item--group:focus-within > .nav__menu,
+  .nav__item--group.is-open > .nav__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  /* A click on the caret closes a panel the pointer is still hovering over,
+     so the closed state has to outrank the hover and focus states. It is
+     declared last and repeats those selectors to win on specificity. */
+  .nav__item--group.is-closed > .nav__menu,
+  .nav__item--group.is-closed:hover > .nav__menu,
+  .nav__item--group.is-closed:focus-within > .nav__menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+  }
+  .nav__item--edge > .nav__menu { left: auto; right: 0; }
+}
 
 .header__cta { display: flex; align-items: center; gap: 12px; }
 
@@ -1695,23 +1806,26 @@ p { color: var(--text-2); }
   .footer__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* The desktop navigation carries five items (Custom Pins, Metal Swag, Bulk
-   Order Guide, Our Factory, Journal) and the header button is the single
-   quote entry point, so the two are no longer duplicates of each other.
+/* The desktop navigation carries four top-level entries and the header button
+   is the single quote entry point, so the two are no longer duplicates.
 
-   With six nav items the wordmark, the nav and the button did not fit
-   between 860 and 1024px, and the button was pushed past the right edge of
-   the viewport. Dropping the sixth nav item freed about 140px, which is
-   enough to keep the button visible down to 1000px. Below that the button
-   would start wrapping onto two lines, so it is hidden instead; the mobile
-   action bar carries a quote button, so nothing is lost. */
-@media (max-width: 1000px) {
-  .header__cta { display: none; }
+   Measured from 1440px down to 861px: with all three carets showing (a touch
+   pointer, where hover does not exist) the wordmark, the nav and the button
+   still fit side by side without overlapping down to 871px. Below 880px the
+   button is hidden, but it keeps its space.
+
+   Keeping the space matters. If the button leaves the layout entirely, the
+   nav is pushed against the right edge of the viewport, and the Guides
+   dropdown, which is 230px wide, then ends 1px outside the screen and the
+   page scrolls sideways. The mobile action bar carries the quote button
+   below 860px, so nothing is lost. */
+@media (max-width: 880px) {
+  .header__cta { visibility: hidden; }
 }
 
 @media (max-width: 1024px) {
   .nav__list { gap: 16px; }
-  .nav__list a { font-size: .85rem; }
+  .nav__list > li > a { font-size: .85rem; }
 }
 
 @media (max-width: 860px) {
@@ -1727,8 +1841,39 @@ p { color: var(--text-2); }
   }
   .nav.is-open { display: block; }
   .nav__list { flex-direction: column; align-items: flex-start; gap: 0; }
-  .nav__list li { width: 100%; border-bottom: 1px solid var(--line); }
-  .nav__list a { display: block; padding: 13px 0; }
+  .nav__list > li { width: 100%; border-bottom: 1px solid var(--line); }
+  .nav__list > li > a { display: block; padding: 13px 0; }
+
+  /* Below 860px the nav is a vertical drawer, so a hover dropdown is
+     impossible. Each group becomes an accordion: the parent row shows the
+     label and the caret, tapping the caret expands the pages underneath.
+     The parent label stays a real link to the directory hub, so the pages
+     are still reachable when the script does not run. */
+  .nav__item--group { display: flex; flex-wrap: wrap; align-items: center; }
+  .nav__item--group > .nav__link--parent { flex: 1 1 auto; }
+  .nav__caret {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    margin: 0 -10px 0 0;
+  }
+  .nav__menu {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0 0 10px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    display: none;
+  }
+  .nav__item--group.is-open > .nav__menu { display: block; }
+  .nav__sublink { padding: 9px 0 9px 16px; font-size: .85rem; }
+  .nav__sublink:hover { background: none; }
+
   .header__cta .btn--primary { display: none; }
   .grid--3 { grid-template-columns: repeat(2, 1fr); }
   .section { padding: 68px 0; }

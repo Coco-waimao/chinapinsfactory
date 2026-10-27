@@ -385,45 +385,92 @@ def check_crumbs(pages):
 
 
 # --------------------------------------------------------------- 11. navigation
-NAV_ITEMS = ['Custom Pins', 'Metal Swag', 'Guides', 'Our Factory', 'Journal']
+def nav_signature(base_rel, text):
+    """The nav as a comparable structure.
+
+    Every page carries the same menu, so the links are resolved to their
+    repo-relative targets and compared as a set. Comparing the raw markup
+    would fail on the relative prefix alone, because a page in products/
+    writes ../guides/index.html where the homepage writes guides/index.html.
+    """
+    m = re.search(r'<nav class="nav" id="mainNav" aria-label="Primary">(.*?)</nav>',
+                  text, re.S)
+    if not m:
+        return None, None, None
+    block = m.group(1)
+
+    def target(href):
+        """Repo-relative path a relative href points at."""
+        path = href.split('#')[0].split('?')[0]
+        if not path:
+            return ''
+        candidate = os.path.normpath(os.path.join(
+            os.path.dirname(os.path.join(SITE, base_rel)), path))
+        return rel(candidate).replace('\\', '/')
+
+    # top level entries, in document order
+    top = [(name, target(href)) for href, name in re.findall(
+        r'<li class="nav__item[^"]*">\s*'
+        r'<a class="nav__link[^"]*" href="([^"]+)"[^>]*>([^<]*)</a>',
+        block, re.S)]
+    # second level entries, in document order
+    subs = [(name, target(href)) for href, name in re.findall(
+        r'<a class="nav__sublink" href="([^"]+)"[^>]*>([^<]*)</a>', block, re.S)]
+    return top, subs, block
 
 
 def check_nav(pages):
-    """The header nav is a fixed set of intent entries.
+    """The header nav is a fixed structure of intent entries.
 
     The quote entry used to live in the nav as well as in the header button,
     which put the same destination twice next to each other. The nav must not
-    grow a second quote entry, and every page must carry the same five items.
+    grow a second quote entry, and every page must carry the same menu.
+
+    The menu is generated from one definition in scripts/nav_sync.py, so the
+    check compares every page against that definition rather than against a
+    hard coded list of words. A new page added to the menu therefore cannot
+    be forgotten on some other page.
     """
+    sys.path.insert(0, ROOT)
+    import nav_sync
+
+    expected_top = [(g['label'], g['hub']) for g in nav_sync.NAV_GROUPS]
+    expected_top += [(label, path) for path, label in nav_sync.NAV_FLAT]
+    expected_subs = [(label, path)
+                     for g in nav_sync.NAV_GROUPS for path, label in g['children']]
+
     for r, f in pages:
         text = load(f)
-        m = re.search(r'<ul class="nav__list">(.*?)</ul>', text, re.S)
-        if not m:
+        top, subs, block = nav_signature(r, text)
+        if block is None:
             fail('nav', f'{r}: no navigation list found')
             continue
-        items = re.findall(r'<li[^>]*>(.*?)</li>', m.group(1), re.S)
-        names = []
-        for it in items:
-            a = re.search(r'>([^<]+)</a>', it)
-            if a:
-                names.append(a.group(1).strip())
-        if names != NAV_ITEMS:
-            fail('nav', f'{r}: nav items are {names}, expected {NAV_ITEMS}')
+
+        if top != expected_top:
+            fail('nav', f'{r}: nav entries are {top}, expected {expected_top}')
+        if subs != expected_subs:
+            fail('nav', f'{r}: nav submenu entries are {subs}, expected {expected_subs}')
+
         # the quote page must not reappear in the nav next to the header button
-        for it in items:
-            if 'request-a-quote' in it:
-                fail('nav', f'{r}: nav contains a second quote entry next to the header button')
-        # exactly one item may be marked current
-        marked = [it for it in items if 'is-active' in it]
+        if 'request-a-quote' in block:
+            fail('nav', f'{r}: nav contains a second quote entry next to the header button')
+        # at most one group may be marked as the section the visitor is in
+        marked = re.findall(r'<li class="nav__item[^"]*is-active[^"]*">', block)
         if len(marked) > 1:
             fail('nav', f'{r}: {len(marked)} nav items marked as current')
+        # at most one link may be the current page
+        current = re.findall(r'aria-current="page"', block)
+        if len(current) > 1:
+            fail('nav', f'{r}: {len(current)} nav links marked as the current page')
         # the header button must still be the quote entry point
         cta = re.search(r'<div class="header__cta">(.*?)</div>', text, re.S)
         if not cta:
             fail('nav', f'{r}: header CTA button missing')
         elif 'request-a-quote' not in cta.group(1):
             fail('nav', f'{r}: header CTA does not point to the quote page')
-    note(f'navigation: {len(NAV_ITEMS)} fixed items on every page')
+
+    note(f'navigation: {len(expected_top)} entries and '
+         f'{len(expected_subs)} submenu entries on every page')
 
 
 # ------------------------------------------------------------ 10. line endings
