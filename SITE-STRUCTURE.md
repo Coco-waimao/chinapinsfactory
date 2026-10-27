@@ -116,6 +116,7 @@
 /  (index.html)                                   首页 · 工厂定位 + 信任锚 + 规格速配器 + FAQ + RFQ
 │
 ├── products/                                    买什么
+│   ├── index.html                               ★ 目录中枢 · 5 条产品线聚合页（对外 URL /products/）
 │   ├── custom-enamel-pins.html                  核心品类 · 5 种工艺 + 电镀 + 背扣 + 包装
 │   ├── custom-metal-swag.html                   延伸品类 · 挑战币 / 奖牌 / 钥匙扣 / 皮带扣 / 袖扣
 │   ├── custom-metal-badges.html                 延伸品类 · 徽章类目（服务徽章 / 盾形 / 机构徽章）
@@ -123,10 +124,14 @@
 │   └── request-a-quote.html                     询价页 · 全站唯一转化落地页
 │
 ├── guides/                                      怎么买
+│   ├── index.html                               ★ 目录中枢 · 按买家任务分组（对外 URL /guides/）
 │   ├── bulk-order-guide.html                    ★ 批量下单指南 · 长尾承接页，无任何金额
+│   ├── design-file-specs.html                   ★ 设计文件规范 · 线宽 / 色块 / 字号 / 格式
+│   ├── process-comparison.html                  ★ 五工艺对比矩阵 · 同口径横向对比
 │   └── faq.html                                 ★ 独立 FAQ · 27 问长尾承接
 │
 ├── company/                                     是不是靠谱
+│   ├── index.html                               ★ 目录中枢 · 工厂 / 联系 / 样品（对外 URL /company/）
 │   ├── factory.html                             工厂与品控 · E-E-A-T 信任页
 │   └── contact.html                             ★ 联系页 · 联系方式 / 工厂档案 / 联系表单
 │
@@ -144,7 +149,7 @@
 └── thank-you.html                               ◦ 表单提交后展示 · 不挂链接、不进 sitemap
 ```
 
-**最终 18 个页面**（原 5 + 新增 13）。文件名相对旧版的三处变化：
+**最终 23 个页面**（原 5 + 新增 18）。文件名相对旧版的三处变化：
 
 | 旧文件名 | 新文件名 | 变化原因 |
 |---|---|---|
@@ -780,10 +785,102 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
 第一阶段上线后，按数据表现决定是否加：
 
-1. 更多工艺页：软珐琅单独页、挑战币单独页（把长尾词各自拆出来）
+1. 更多工艺页：软珐琅单独页、挑战币单独页（把长尾词各自拆出来）。
+   过渡方案已落地：`guides/process-comparison.html` 先用同口径对比矩阵承住这批意图，拆页等该页在 GSC 里跑出查询数据再做。
 2. 案例页：按买家类型分的项目案例（能吃到大量长尾）
 3. 询价表单接后端（Formspree / Cloudflare Worker / 邮件转发），并做询盘入库与跟进状态管理
 4. GA4 + Search Console 接入与事件埋点，重点跟踪速配器配置次数与表单提交率
 5. 下载型物料：产品目录 PDF、工艺对照表 PDF、尺寸对照表 PDF，走 gated download 收线索
 6. 数字样品册：把 12 种电镀与 5 种工艺做成可点击的在线样品册
 7. 独立域名策略评估：是否需要为 challenge coins 或 keychains 单开子域
+
+## 十五、内容更新机制（2026-10-27 建立）
+
+### 15.1 先厘清一个前提
+
+「定期更新提升 SEO」这个说法有一半不成立，落地时必须按下面的口径执行，否则会做出 Google 点名的 search-first 动作：
+
+| 常见做法 | Google 官方口径 | 本站执行 |
+|---|---|---|
+| 提高发文频率换排名 | 发布频率不是排名因素。John Mueller 明确讲过每天发博客不会自动提升排名，Google 没有「内容计数器」 | 不设发文日历指标，只按意图缺口排队列 |
+| 改日期让页面显得新 | helpful content 文档把「Are you changing the date of pages to make them seem fresh when the content has not substantially changed?」列为自查项，并明确这对排名没有帮助 | `dateModified` 只在正文实质变更时动 |
+| `lastmod` 全站刷一遍 | `lastmod` 只有在持续可验证准确时才被采信。全站同一个日期等于告诉爬虫这字段没有信息量，整站被降级忽略 | `lastmod` 从 `git log -1 --format=%cd -- <文件>` 推导，不手写 |
+
+判定一条内容「值不值得刷新」只有一条标准：**老读者这次会不会得到不一样的答案**。会 → 改正文并同步日期；不会 → 一个字都别动。
+
+### 15.2 三类内容，三种节奏
+
+更新触发源不同的内容混在一起做是最常见的错：
+
+1. **事实会自然变质的（真时效内容）**——交期与加急窗口、年产能、设备台数、认证有效期、材料工艺边界、样品政策、海运空运时效、贸易条款与关税口径。**季度复核，只改真变了的。**
+2. **意图缺口（该新增的页面）**——见 15.4 的优先级表。**以新增为主，刷新为辅。**
+3. **每次都跟着动的技术层**——sitemap、JSON-LD、ItemList 计数、feed、可见日期。**由脚本同步，不靠人记得。**
+
+### 15.3 四层展示位模型
+
+新内容落位靠这张表，不靠「想到哪贴到哪」：
+
+| 层 | 位置 | 规则 |
+|---|---|---|
+| 入口层 | 主导航（6 项）、页脚、公告栏、首页 journal 精选卡 | **稳态，不随内容量增长。** 新内容默认不进 |
+| 聚合层 | `products/` `guides/` `company/` `blog/` 四个目录 index | **新内容的主展位。** 卡片网格 + `ItemList`，`numberOfItems` 必须等于可见卡片数 |
+| 上下文层 | 各页底部 linkband、页内锚点、正文内链 | **每张新页至少进 2 个强相关页的 linkband**，新页自己的 linkband 4–6 条且含 1 条指回父 hub |
+| 机器层 | `sitemap.xml`、各页 JSON-LD、`feed.xml`、`llms.txt` | **必须与可见内容一一对应**，手工同步是这里唯一的失分点 |
+
+页脚属于入口层，本轮刻意未改动：18 个页面的页脚保持完全一致，避免「只改部分页」造成 chrome 不一致。要给目录级页面加页脚入口时，必须 18 页同步改。
+
+### 15.4 内容缺口优先级队列
+
+| 优先级 | 页面 | 理由 |
+|---|---|---|
+| **P0** | ✅ 设计文件规范 `guides/design-file-specs.html` | GS-JJ、bulkcustom、maxemblem、pinsfun、miracle-custom 五家竞品全都有，本站全无。高意图「画图前必看」流量，离询价最近 |
+| **P0** | ✅ 五工艺对比矩阵 `guides/process-comparison.html` | 五家竞品都是五方一张表，本站原来只有 hard vs soft 两方。最容易被引用和链出的类型 |
+| **P1** | 材质页（锌合金 / 黄铜 / 铁 / 铜 / 铝） | 常被搜，目前完全空白 |
+| **P1** | 电镀 12 色承接页 | 已有 `detail-plating-finishes` 图与 12 个选项数据，缺页面承接 |
+| **P1** | 扣具页（蝴蝶扣 / PVC 胶帽 / 安全别针 / 磁扣 / 双针） | 同上，数据都在，页面没有 |
+| **P2** | 钥匙扣 / 奖牌 / 皮带扣 / 袖扣 各自独立成页 | 现在全塞在 `custom-metal-swag.html`，一页扛 6 个词，主词被稀释 |
+| **P2** | 贸易术语页（FOB / CIF / DDP、报关、HS 编码、关税） | 2026 年美国对华关税变动频繁，真时效内容，值得季度复核 |
+| **P2** | 成本构成页（**不写单价**，写「什么决定报价」：尺寸 / 线宽 / 色数 / 镀层 / 厚度 / 数量 / 包装 / 模具 / 运费） | 与「不公开价格」不冲突：讲构成不报价，却能吃到 cost 类意图。全站最值得重新取舍的一处 |
+| **P3** | 场景页（企业活动 / 校园社团 / 婚礼 / 球队 / 公益募款 / 粉丝周边）、展会页、案例页 | 搜索量大但竞争激烈，等前两档站稳再打 |
+
+### 15.5 新内容上线清单
+
+每加一页要走的固定动作，漏任何一步就是新的不一致：
+
+| # | 动作 | 归属层 | 必做 |
+|---|---|---|---|
+| 1 | 建页面，放进对应目录 | — | 必做 |
+| 2 | 补 meta / H1 / canonical / og / JSON-LD | 机器层 | 必做 |
+| 3 | 加进该目录 index 的卡片网格 + `ItemList` | 聚合层 | 必做 |
+| 4 | 加进 `sitemap.xml`（`lastmod` 取 git 日） | 机器层 | 必做 |
+| 5 | 进 `feed.xml` 与 `llms.txt` | 机器层 | 必做 |
+| 6 | 在 2 个强相关页的 linkband 或正文里加链接 | 上下文层 | 必做 |
+| 7 | 新页自己底部写 4–6 条 linkband，含指回父 hub | 上下文层 | 必做 |
+| 8 | 可见日期 + `datePublished` / `dateModified` 对齐 | 机器层 | 必做 |
+| 9 | 页脚对应列加一条 | 入口层 | 仅目录级，且需全站同步 |
+| 10 | 首页 journal 精选卡 | 入口层 | 可选，需人工挑 |
+
+**5 分钟判据**：新页写完之后，如果第 3、6、7 步做不了，说明它不该独立成页，应该并进某个已有页面的一个 section。**先有内容缺口，再有页面**，不是反过来。
+
+### 15.6 日期纪律
+
+一次真实更新，日期要落在四处且完全一致：页面可见的 `Updated` 日期、JSON-LD 的 `dateModified`、`sitemap.xml` 的 `lastmod`、feed 的 `pubDate`。
+
+- `datePublished` 永远不动
+- `dateModified` 只在正文实质变更时动
+- `lastmod` 与 `pubDate` 从 git 推导，不手写
+
+配套的反查链：某个日期突然集体变化，说明当天有批量改动，可以复核是不是模板级改动污染了所有页面的 `lastmod`。
+
+### 15.7 本轮实际执行（2026-10-27）
+
+| 动作 | 文件 | 性质 |
+|---|---|---|
+| 新建目录中枢 | `products/index.html` `guides/index.html` `company/index.html` | 纯新增，`CollectionPage` + `ItemList` |
+| 新建 P0 内容页 | `guides/design-file-specs.html` `guides/process-comparison.html` | 纯新增，`TechArticle` + `ItemList` |
+| 新建机器层产物 | `feed.xml`（RSS 2.0）、`llms.txt` | 纯新增 |
+| 补 sitemap | `sitemap.xml` | 16 → 21 条；修正 2 条失真 `lastmod`；修 3 处 `</url><url>` 连写 |
+| 补入口 | `index.html` journal 区块 | +8 行 linkband |
+| 补上下文层内链 | `guides/faq.html` `guides/bulk-order-guide.html` `products/custom-enamel-pins.html` `products/samples.html` `products/request-a-quote.html` | 共 +10 行 |
+
+本轮**未创建任何新图片**，全部复用 `assets/images/` 既有资产，因此不存在图片上线风险。

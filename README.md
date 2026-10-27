@@ -21,6 +21,7 @@ robots.txt / sitemap.xml    搜索引擎配置
 CNAME                      GitHub Pages 自定义域名（www.chinapinsfactory.com）
 
 products/                   买什么
+  index.html                 目录中枢（对外 URL 为 /products/）
   custom-enamel-pins.html     批发定制别针（5 种工艺）
   custom-metal-swag.html      金属周边（挑战币/奖牌/钥匙扣/皮带扣/袖扣）
   custom-metal-badges.html    金属徽章
@@ -28,10 +29,14 @@ products/                   买什么
   request-a-quote.html        询价页（唯一转化落地页）
 
 guides/                     怎么买
+  index.html                 目录中枢（对外 URL 为 /guides/，按买家任务分组）
   bulk-order-guide.html       批量下单指南
+  design-file-specs.html      设计文件规范（线宽/色块/字号/格式）
+  process-comparison.html     五种工艺对比矩阵
   faq.html                    常见问题（27 问）
 
 company/                    是不是靠谱
+  index.html                 目录中枢（对外 URL 为 /company/）
   factory.html                工厂与品控
   contact.html                联系方式与联系表单
 
@@ -49,6 +54,9 @@ assets/
   css/styles.css              全站样式
   js/main.js                  交互脚本（导航、皮肤切换、速配器、表单提交）
   images/                     图片资源（webp + jpg 双格式，含 srcset 尺寸档）
+
+feed.xml                    RSS 2.0（AI 爬虫与聚合器的内容入口）
+llms.txt                    AI 爬虫索引（Markdown 格式，列出关键页面与一句话说明）
 ```
 
 每个页面只服务一个主关键词，文件名即主词 slug，目录即页面角色组。
