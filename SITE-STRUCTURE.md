@@ -46,7 +46,7 @@
 
 **Phase 4 待办（上线前）**
 
-- [ ] 移除主题切换器（DOM、`applySkin` JS、`<head>` 内联脚本，`ink` 变量固化为 `:root`）
+- [x] 移除主题切换器（DOM、`applySkin` JS、`<head>` 内联脚本，`ink` 变量固化为 `:root`）—— 2026-10-27 完成，连带删除读 `localStorage` 的内联脚本，否则老访客会继续看到 graphite 皮肤 |
 - [ ] 替换邮箱、电话、WhatsApp、证书编号为真实信息
 - [ ] 确认 8,000 ㎡ / 240 万枚 / 22 CNC / 16 冲压 / 8 压铸 / 24 点胶 / 18 技师为真实数据
 - [ ] 确认认证覆盖范围，未覆盖则删除对应声明块
@@ -54,7 +54,7 @@
 - [ ] 询价表单接后端（Formspree / Cloudflare Worker / 邮件转发）
 - [ ] GA4 / Search Console 接入
 
-**新增样式组件**（`assets/css/styles.css` 第 23-26 节）：`.page-hero`、`.stats--dark`、`.article__*`、`.toc`、`.post-meta`、`.author-box`、`.rows__*`、`.timeline__*`、`.callout`、`.bullets`、`.split__*`、`.deflist__*`、`.linkband`。
+**新增样式组件**（`assets/css/styles.css` 第 22-26 节）：`.page-hero`、`.stats--dark`、`.article__*`、`.toc`、`.post-meta`、`.author-box`、`.rows__*`、`.timeline__*`、`.callout`、`.bullets`、`.split__*`、`.deflist__*`、`.linkband`。
 
 **页面生成器**：站点的 18 个页面由同一套 chrome 模板生成（head / 公告条 / 页头 / 面包屑 / 页脚 / 浮条 / 移动端吸底条 / 主题切换器），保证风格零漂移。改公共部分时改模板再重跑，或直接改各页 HTML（结构一致，手改同样安全）。
 
@@ -120,6 +120,9 @@
 │   ├── custom-enamel-pins.html                  核心品类 · 5 种工艺 + 电镀 + 背扣 + 包装
 │   ├── custom-metal-swag.html                   延伸品类 · 挑战币 / 奖牌 / 钥匙扣 / 皮带扣 / 袖扣
 │   ├── custom-metal-badges.html                 延伸品类 · 徽章类目（服务徽章 / 盾形 / 机构徽章）
+│   ├── materials.html                           ★ 规格页 · 五种基底金属与厚度
+│   ├── plating-finishes.html                    ★ 规格页 · 12 种电镀与表面处理
+│   ├── backings.html                            ★ 规格页 · 五种背扣与徽章固定方式
 │   ├── samples.html                             ★ 打样与原型 · 四类样品 / 成本 / 交期
 │   └── request-a-quote.html                     询价页 · 全站唯一转化落地页
 │
@@ -149,7 +152,7 @@
 └── thank-you.html                               ◦ 表单提交后展示 · 不挂链接、不进 sitemap
 ```
 
-**最终 23 个页面**（原 5 + 新增 18）。文件名相对旧版的三处变化：
+**最终 26 个页面**（原 5 + 新增 21）。文件名相对旧版的三处变化：
 
 | 旧文件名 | 新文件名 | 变化原因 |
 |---|---|---|
@@ -224,7 +227,7 @@
 |---|---|---|
 | 导航 | 买家意图直达 | 4 个顶级项 + 10 个二级项 |
 | 面包屑 | 目录层级 | `Home / 目录 / 当前页` |
-| 页脚 | 平铺实用链接 | 23 页完全一致，无目录项 |
+| 页脚 | 平铺实用链接 | 26 页完全一致，无目录项 |
 
 **导航结构**
 
@@ -283,6 +286,9 @@
 | blog/index.html + 4 篇 | 吃信息型长尾，建主题集群 | how to order lapel pins from china 等 | 跳品类页 / 批量下单指南 / 询价页 |
 | products/custom-metal-badges.html | 承接徽章类目的独立采购意图 | custom metal badges | 跳询价页 |
 | products/samples.html | 讲清打样流程，化解"先买样品"的顾虑 | custom lapel pin samples | 跳询价页 |
+| products/materials.html | 讲清基底金属如何决定线宽下限与可选工艺 | lapel pin base metals | 跳品类页 / 询价页 |
+| products/plating-finishes.html | 列出 12 种电镀与表面处理，解释旧色工艺原理 | enamel pin plating finishes | 跳询价页 / 样品页 |
+| products/backings.html | 讲清五种背扣与徽章固定方式 | lapel pin backings | 跳询价页 / 样品页 |
 | guides/faq.html | 27 问承接疑问型长尾 | lapel pin faq | 跳品类页 / 询价页 |
 | company/contact.html | 联系方式与工厂档案，补 E-E-A-T 信任 | contact lapel pin factory | 跳询价页 |
 | legal/privacy-policy.html | 合规与信任 | 无 | 无 |
@@ -324,6 +330,9 @@
 | custom lapel pin samples | products/samples.html | lapel pin sample order, prototype sample, sample kit finishes |
 | lapel pin faq | guides/faq.html | enamel pin questions, custom pin minimum order, pin lead time |
 | contact lapel pin factory | company/contact.html | contact china pin supplier, kunshan pin factory contact |
+| lapel pin base metals | products/materials.html | brass lapel pin, zinc alloy pin, stainless steel lapel pin, enamel pin metal gauge |
+| enamel pin plating finishes | products/plating-finishes.html | gold plating for lapel pins, antique gold finish, black nickel plating, matte ruthenium |
+| lapel pin backings | products/backings.html | butterfly clutch pin, safety pin back, screw back lapel pin, magnetic pin back |
 
 四篇文章互相不抢词，每篇都往品类页、批量下单指南与询价页导流。
 
@@ -888,7 +897,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
   面包屑层级与 JSON-LD `BreadcrumbList` 保持一一对应。
 
-- **页脚保持 23 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 23 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
+- **页脚保持 26 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 26 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
 
 每个目录页因此获得的入口：面包屑（同目录所有兄弟页）+ 首页语境按钮 + 目录内互相引用。
 
@@ -918,7 +927,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
 **新增的硬约束**（写进 `scripts/check.py`）：
 
-- 归一化后的顶级项与二级项集合在 23 页上必须完全一致
+- 归一化后的顶级项与二级项集合在 26 页上必须完全一致
 - nav 块内不得出现 `request-a-quote`（询价入口只有页头 CTA、移动端吸底条与各页语境 CTA）
 - 每页 `is-active` 至多 1 个，`aria-current="page"` 至多 1 个
 - 导航的唯一来源是 `scripts/nav_sync.py`，禁止手改单页 nav 块
@@ -931,9 +940,9 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 |---|---|---|
 | **P0** | ✅ 设计文件规范 `guides/design-file-specs.html` | GS-JJ、bulkcustom、maxemblem、pinsfun、miracle-custom 五家竞品全都有，本站全无。高意图「画图前必看」流量，离询价最近 |
 | **P0** | ✅ 五工艺对比矩阵 `guides/process-comparison.html` | 五家竞品都是五方一张表，本站原来只有 hard vs soft 两方。最容易被引用和链出的类型 |
-| **P1** | 材质页（锌合金 / 黄铜 / 铁 / 铜 / 铝） | 常被搜，目前完全空白 |
-| **P1** | 电镀 12 色承接页 | 已有 `detail-plating-finishes` 图与 12 个选项数据，缺页面承接 |
-| **P1** | 扣具页（蝴蝶扣 / PVC 胶帽 / 安全别针 / 磁扣 / 双针） | 同上，数据都在，页面没有 |
+| **P1** | ✅ 材质页 `products/materials.html` | 站内已有黄铜 / 铁 / 不锈钢 / 青铜 / 锌合金的厚度数据，规划里提的「铜」「铝」无任何站内依据，按不编造原则未写 |
+| **P1** | ✅ 电镀 12 色承接页 `products/plating-finishes.html` | 12 个色名以产品页为唯一口径，首页 Spec Builder 与 FAQ 原先各说各的，已一并统一 |
+| **P1** | ✅ 背扣页 `products/backings.html` | 五种背扣与徽章固定方式均来自产品页原文 |
 | **P2** | 钥匙扣 / 奖牌 / 皮带扣 / 袖扣 各自独立成页 | 现在全塞在 `custom-metal-swag.html`，一页扛 6 个词，主词被稀释 |
 | **P2** | 贸易术语页（FOB / CIF / DDP、报关、HS 编码、关税） | 2026 年美国对华关税变动频繁，真时效内容，值得季度复核 |
 | **P2** | 成本构成页（**不写单价**，写「什么决定报价」：尺寸 / 线宽 / 色数 / 镀层 / 厚度 / 数量 / 包装 / 模具 / 运费） | 与「不公开价格」不冲突：讲构成不报价，却能吃到 cost 类意图。全站最值得重新取舍的一处 |
@@ -1039,3 +1048,34 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 5. **不进导航**。导航只保留 `Journal` 一个入口指向 `blog/index.html`，入口层稳态不增长是硬规则；每加一篇就往导航里塞一项，导航会退化成文章列表，顶级项也会被顶出首屏。
 
 **导航的唯一来源是 `scripts/nav_sync.py`。** 要增删二级项，改脚本里的 `NAV_GROUPS` / `NAV_FLAT`，然后跑 `python scripts/nav_sync.py` 批量重写 23 页；`--check` 只报告差异不落盘。**不要手改单个页面的 nav 块**，23 页手改必然漂移，`scripts/check.py` 会在提交前把漂移拦下来。
+
+### 15.10 P1 规格页三件（2026-10-27 晚）
+
+补齐规划 15.4 队列里的三个 P1 缺口。这三页是**规格页**，不是产品线：它们回答的是一笔订单里
+"用什么金属、做什么表面、用什么背扣"三个具体问题，与品类页互补而不是抢词。
+
+| 页面 | 主词 | 数据来源 |
+|---|---|---|
+| `products/materials.html` | lapel pin base metals | 工艺对比页的基底金属列 + 设计文件规范页的线宽推导 |
+| `products/plating-finishes.html` | enamel pin plating finishes | 珐琅徽章页的 12 色段落 + FAQ 的电镀答案 |
+| `products/backings.html` | lapel pin backings | 珐琅徽章页的背扣段落 + 徽章页的 Fixing 规格行 |
+
+**数据纪律**：三页的每一个数字、每一个色名、每一个扣具名都能在站内既有内容里找到出处。
+规划里提到的「铜」与「铝」作为基底金属在站内没有任何依据，因此材质页只写黄铜、铁、不锈钢、
+青铜、锌合金五种；电镀色卡里的「铜」是镀层颜色，不是基底金属，两者不混。
+
+**顺带修掉的两处站内矛盾**：
+
+1. **电镀色卡有两套。** 产品页写 12 种（shiny/matte 24K gold、antique gold、silver、brushed silver、
+   black nickel、matte black nickel、rose gold、copper、antique brass、antique silver、matte ruthenium），
+   首页 Spec Builder 的下拉与 FAQ 的答案却写 8 种（含 silver nickel、matte black、rainbow anodized），
+   两边都自称十二种。买家在 Spec Builder 里选到 "Rainbow anodized"，工厂这边没有这个色可对。
+   已统一到产品页那套，首页下拉改为完整 12 项，FAQ 的答案（JSON-LD 与可见文本各一处）同步。
+2. **配图里出现了彩虹色。** `detail-plating-finishes` 与 `sample-kit-finishes` 两张图各含一个彩虹色样品，
+   与文字清单对不上。**待用户核实**：若工厂确实做彩虹阳极氧化，应把 rainbow anodized 补进清单；
+   若不做，这两张图需要换。新的电镀页暂时避开色卡图，以免把矛盾再放大。
+
+**落位**：三页进 `products/index.html` 的卡片网格（单独一个「Specification」区块，3 张卡正好一行），
+`ItemList` 扩到 8 条；sitemap 24 条、feed 16 条、llms.txt 22 个 URL；
+上下文层由珐琅徽章页（正文内链 + linkband）、工艺对比页、设计文件规范页、徽章页各贡献一条。
+三页入链数分别为 materials 6、backings 5、plating-finishes 4，均超过「至少 2 个强相关页」的要求。
