@@ -1695,14 +1695,21 @@ p { color: var(--text-2); }
   .footer__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Between the full desktop navigation and the mobile hamburger menu there is
-   a band (roughly 860-1024px) where the wordmark, six nav items and the
-   header button no longer fit on one line, and the button was pushed past
-   the right edge of the viewport. The button is the first thing to go: the
-   nav already carries a Request a Quote item and the mobile action bar
-   carries a Get a quote button, so nothing is lost. */
-@media (max-width: 1024px) {
+/* The desktop navigation carries five items (Custom Pins, Metal Swag, Bulk
+   Order Guide, Our Factory, Journal) and the header button is the single
+   quote entry point, so the two are no longer duplicates of each other.
+
+   With six nav items the wordmark, the nav and the button did not fit
+   between 860 and 1024px, and the button was pushed past the right edge of
+   the viewport. Dropping the sixth nav item freed about 140px, which is
+   enough to keep the button visible down to 1000px. Below that the button
+   would start wrapping onto two lines, so it is hidden instead; the mobile
+   action bar carries a quote button, so nothing is lost. */
+@media (max-width: 1000px) {
   .header__cta { display: none; }
+}
+
+@media (max-width: 1024px) {
   .nav__list { gap: 16px; }
   .nav__list a { font-size: .85rem; }
 }

@@ -67,6 +67,41 @@ llms.txt                    AI 爬虫索引（Markdown 格式，列出关键页�
 
 > 注意：站内链接一律写成显式文件名（例如 `../blog/index.html`），不写目录形式（`../blog/`）。浏览器打开 `file://` 目录时会显示文件列表而不是 `index.html`，写成目录形式会丢掉双击预览的能力。对外 URL 仍由 canonical 指向干净的 `/blog/`。
 
+## 提交前检查
+
+**每次 commit / push 之前必须先跑本地检查。** 不要上线后再补做检查。
+
+```bash
+python scripts/check.py          # 完整报告
+sh scripts/install-hooks.sh      # 一次性安装 git hook
+```
+
+安装后 `pre-commit` 和 `pre-push` 会自动执行检查，**不通过就拦住提交和推送**，报错直接显示在终端。
+
+检查覆盖 9 项：
+
+| # | 检查项 | 拦截什么 |
+|---|---|---|
+| 1 | JSON-LD 解析 | 结构化数据语法错误 |
+| 2 | 内部链接 | 指向不存在文件的相对链接与站内绝对链接（含 canonical） |
+| 3 | 图片引用 | 指向不存在文件的图片与 srcset |
+| 4 | ItemList | `numberOfItems` 与条目数不符，或条目在页面上不可见 |
+| 5 | FAQPage | Question 数与可见问题数不符 |
+| 6 | H1 / canonical | 一页多个 H1、canonical 缺失或重复 |
+| 7 | 机器层 | sitemap / feed / llms.txt 三者互相不一致，页面漏进 sitemap |
+| 8 | 可达性 | 存在从首页无法到达的孤岛页；目录 hub 入链不足 |
+| 9 | 面包屑 | 目录页缺少层级，或目录项没链到对应 hub |
+| 10 | 导航 | 导航项与固定的 5 项不一致，重复的询价入口，当前项多于一个 |
+| 11 | 行尾 | 单个文件的 CRLF/LF 被意外翻转（会造成巨大无意义 diff） |
+
+第 8 项的原理是：每个页面都必须在链接图上从 `index.html` 可达。`404.html` 与 `thank-you.html` 是仅有的两个例外（前者由服务器兜底，后者由脚本跳转），脚本已按预期处理。
+
+第 9 项对应站点的层级约定：**导航 = 买家意图直达（5 项平铺），面包屑 = 目录层级，页脚 = 平铺实用链接。** 子页面包屑形如 `Home / Products / Custom Pins`，其中 `Products` 是可点链接，指向 `products/index.html`；目录页自身显示 `Home / Products`，`Products` 为当前项。目录入口不走页脚——页脚三列装的是具体工艺与杂项链接，塞进目录节点会打乱层级。
+
+第 10 项：导航固定为 `Custom Pins | Metal Swag | Guides | Our Factory | Journal` 五项。`Guides` 指向 `guides/index.html` 目录中枢页（按买家任务组织的 4 篇指南），询价入口只有页头 `Get a Quote` 按钮和移动端吸底条两处，导航里不再重复放第三个。
+
+配套的可达性明细可以用 `python scripts/reachability.py` 查看，它会列出每个页面的入链数、出链数、距首页的层级，以及三个目录中枢页各自被哪些页面链接。
+
 ## 部署
 
 纯静态站点，可直接托管在任意静态平台（GitHub Pages、Netlify、Vercel、Cloudflare Pages、传统虚拟主机均可）。子目录会被静态服务器原样映射成 URL 路径，无需任何配置。

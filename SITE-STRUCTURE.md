@@ -203,7 +203,9 @@
 
 **404 页在 `file://` 下丢样式**：`404.html` 里有一段脚本，在页面被请求到子路径时把相对引用改写成站点根绝对路径。原来的守卫是 `window.location.origin !== 'null'`，但 Chrome 在 `file://` 下返回的是字符串 `"file://"` 而不是 `"null"`，守卫失效，脚本把样式表改写成了 `/assets/css/styles.css`，Windows 上被解析到磁盘根 `C:/assets/...`，整页裸奔。改成按 `location.protocol` 判断协议，并算出真正的 ROOT（`file://` 下取 404.html 所在目录），同时给 `absolute()` 加了 `file:` 前缀和幂等判断，避免二次改写时重复套 ROOT。
 
-**头部在 861–1024px 区间溢出**：全宽导航（6 项）+ wordmark + 头部按钮在 900px 视口下需要 990px，超出 115px，"Get a Quote" 按钮被推出屏幕右缘，产生横向滚动条。加了 `max-width: 1024px` 断点：隐藏 `.header__cta`（导航里本来就有 Request a Quote，移动端吸底条也有 Get a quote），并把导航间距从 26px 收到 16px、字号从 .92rem 收到 .85rem。改完 18 页 × 12 个断点共 216 个组合全部零横向溢出。
+**头部在 861–1024px 区间溢出**：全宽导航（当时 6 项）+ wordmark + 头部按钮在 900px 视口下需要 990px，超出 115px，"Get a Quote" 按钮被推出屏幕右缘，产生横向滚动条。最初加了 `max-width: 1024px` 断点隐藏 `.header__cta`，并把导航间距从 26px 收到 16px、字号从 .92rem 收到 .85rem。
+
+2026-10-27 导航项由 6 项减为 5 项（删除与 CTA 重复的 `Request a Quote`）后释放约 143px，隐藏断点相应放宽到 `max-width: 1000px`，1001px 起 CTA 单行完整可见。
 
 ### 2.0.4 响应式不变量（改版时的验收线）
 
@@ -306,7 +308,7 @@
 
 规则：
 
-1. 每页页头导航固定 6 个链接（品类页 / 金属周边页 / 批量下单指南 / 工厂页 / 博客 / 询价），保证任意两页之间 ≤2 跳。
+1. 每页页头导航固定 5 个链接（品类页 / 金属周边页 / 批量下单指南 / 工厂页 / 博客），保证任意两页之间 ≤2 跳。询价入口由页头 CTA 按钮与移动端吸底条承担，不占导航项。
 2. 文章正文里出现的品类词必须链到对应品类页，**不做锚文本堆砌**，用自然句做锚。
 3. 面包屑只在子页出现，首页不出现（首页本身就是根）。
 4. 批量下单指南是第二强承接页，至少被首页、文章、品类页各链一次。
@@ -822,12 +824,65 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
 | 层 | 位置 | 规则 |
 |---|---|---|
-| 入口层 | 主导航（6 项）、页脚、公告栏、首页 journal 精选卡 | **稳态，不随内容量增长。** 新内容默认不进 |
+| 入口层 | 主导航（5 项）、页头 CTA、页脚、公告栏、首页 journal 精选卡 | **稳态，不随内容量增长。** 新内容默认不进 |
 | 聚合层 | `products/` `guides/` `company/` `blog/` 四个目录 index | **新内容的主展位。** 卡片网格 + `ItemList`，`numberOfItems` 必须等于可见卡片数 |
 | 上下文层 | 各页底部 linkband、页内锚点、正文内链 | **每张新页至少进 2 个强相关页的 linkband**，新页自己的 linkband 4–6 条且含 1 条指回父 hub |
 | 机器层 | `sitemap.xml`、各页 JSON-LD、`feed.xml`、`llms.txt` | **必须与可见内容一一对应**，手工同步是这里唯一的失分点 |
 
-页脚属于入口层，本轮刻意未改动：18 个页面的页脚保持完全一致，避免「只改部分页」造成 chrome 不一致。要给目录级页面加页脚入口时，必须 18 页同步改。
+#### 15.3.1 目录层级由面包屑承担，不由页脚承担
+
+目录级页面（`products/` `guides/` `company/`）的入口走**面包屑**，不走页脚。理由：
+
+- **语义层级不同。** 页脚三列是「平铺的实用链接区」——Products 列装的是具体工艺的锚点（Hard enamel、Soft enamel、Die struck…），Company 列装的是杂项。往里塞目录页，等于在平铺列表里混进一层目录，用户点进去发现又是一层。
+- **面包屑本来就是为此设计的。** `.crumbs` 样式自建站起就存在，`SITE-STRUCTURE` 第四章也写着「面包屑只在子页出现，首页不出现」。此前的问题是**样式建好了却没在各页填上目录层级**——全站 23 页里只有 6 页带层级，其余只有孤零零的 `Home`。现已补齐为通例：
+
+  ```
+  叶子页：Home / Products / Custom Pins      ← Products 是可点链接，指向 products/index.html
+  目录页：Home / Products                     ← Products 是当前项，链接到自身
+  ```
+
+  面包屑层级与 JSON-LD `BreadcrumbList` 保持一一对应。
+
+- **页脚保持 23 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 23 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
+
+每个目录页因此获得的入口：面包屑（同目录所有兄弟页）+ 首页语境按钮 + 目录内互相引用。当前入链数 `products/index.html` 6、`guides/index.html` 5、`company/index.html` 3。
+
+#### 15.3.2 主导航不加二级菜单，导航项由 6 项减为 5 项
+
+导航保持平铺，**不引入 hover 展开的二级菜单**。理由：
+
+- **空间不够。** 加下拉触发器会让 861–1024px 这段本已紧张的区间再次溢出——该区间历史上已经把 CTA 按钮挤出视口，只能靠隐藏按钮解决。
+- **导航项是买家意图，不是目录。** 每项都直达一个具体页面。加下拉等于把「意图 → 目标页」变成「意图 → 目录 → 目标页」，多一跳。
+- **导航里已有 hub 页的先例。** `Journal` 直接指向 `blog/index.html`，说明这套设计本就允许入口项指向聚合页。
+- **悬停菜单在触屏与无 JS 场景下不可用**，且需要额外的键盘可达性处理，静态站收益低、成本高。
+
+**导航项从 6 项减为 5 项**：原第 6 项 `Request a Quote` 与页头 CTA 按钮 `Get a Quote` 指向同一个 URL（`products/request-a-quote.html`），视觉上紧挨着，等于同一个按钮出现两次。保留页头 CTA（它是唯一的询价入口，视觉重量也更重要），删除导航中的重复项。
+
+```
+删除前：Custom Pins | Metal Swag | Bulk Order Guide | Our Factory | Journal | Request a Quote | [Get a Quote]
+删除后：Custom Pins | Metal Swag | Bulk Order Guide | Our Factory | Journal            | [Get a Quote]
+```
+
+连带影响与处置：
+
+| 影响 | 处置 |
+|---|---|
+| 询价页入链 | 无影响。该页全站入链 161 条、来自 22 个页面（页脚 + 各页 linkband + 首页），导航项本就是冗余来源 |
+| 询价页导航高亮 | 导航内不再有该页项，改由面包屑 `Home / Products / Request a Quote` 承担当前位置标识 |
+| 1024px 空间 | 导航宽度从 678px 降到 535px（1440px 档），释放约 143px |
+| CTA 断点 | `max-width: 1024px` 隐藏 CTA 的规则放宽到 `max-width: 1000px`。实测 1001px 起 CTA 单行完整可见（最小间距 24px），1000px 及以下隐藏由移动端吸底条承担 |
+
+**guides hub 进导航，products 与 company hub 不进。** 三个目录的中枢页都值得被找到，但只有 guides 能进：
+
+| hub | 处置 | 理由 |
+|---|---|---|
+| `guides/index.html` | **进导航**，替换原 `Bulk Order Guide` 项 | 原导航项本就是该 hub 的子项，替换为 hub 本身不新增项、不产生近义冲突。hub 按买家任务（准备设计文件 / 选工艺 / 下单与物流）组织，这是单个导航项给不出的维度，目录下 4 篇指南因此全部可达 |
+| `products/index.html` | 不进 | 导航已有 `Custom Pins` 与 `Metal Swag`，两项都是该 hub 的子项。再加 `Products` 变成「父目录 + 两个子目录」并存，用户会困惑两者的区别 |
+| `company/index.html` | 不进 | 导航已有 `Our Factory`，而它正是 company hub 的主体内容（factory + QC + export desk）。再加 `Company` 是近义重复 |
+
+处置后 guides hub 的站内入链从 5 升到 **22**，成为全站入链第二多的页面（仅次于首页）。`bulk-order-guide.html` 失去导航项后仍有 74 条入链、来自 22 个页面（页脚全站 + 各页 linkband + guides hub 卡片），无损失。
+
+结论：**导航 = 意图直达（5 项，平铺，其中 Guides 指向目录中枢），面包屑 = 目录层级，页脚 = 平铺实用链接。** 三层各司其职，不重复。
 
 ### 15.4 内容缺口优先级队列
 
@@ -884,3 +939,32 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 | 补上下文层内链 | `guides/faq.html` `guides/bulk-order-guide.html` `products/custom-enamel-pins.html` `products/samples.html` `products/request-a-quote.html` | 共 +10 行 |
 
 本轮**未创建任何新图片**，全部复用 `assets/images/` 既有资产，因此不存在图片上线风险。
+
+### 15.8 目录入口与提交前检查（2026-10-27 补做）
+
+补做原因：目录中枢页建好后，站内只有首页一处链接指向 `products/index.html` 和 `guides/index.html`，`company/index.html` **入链为 0**（仅出现在 `sitemap.xml` 与 `llms.txt`），属于孤岛页。首页 journal 区块末尾那一行 linkband 也不足以构成稳定入口。
+
+| 动作 | 文件 | 性质 |
+|---|---|---|
+| 补全面包屑目录层级 | 17 个页面 | `Home` 一级 → `Home / 目录 / 当前页`；目录项为可点链接，指向同目录 hub |
+| 补首页语境入口 | `index.html` | swag 区块加「All product lines」按钮；factory 区块加「Company overview」按钮 |
+| 撤掉页脚目录入口 | 23 个页面 | 试加后判定层级错误，已全部撤销，页脚恢复全站一致 |
+| 对齐 JSON-LD 与可见标题 | 3 个 hub 页 | `ItemList` 的 `name` 与页面可见卡片标题逐字一致（Google 要求结构化数据描述可见内容） |
+| 建提交前检查 | `scripts/check.py` `scripts/reachability.py` `scripts/install-hooks.sh` | 新增，`pre-commit` 与 `pre-push` 自动执行 |
+| 导航去重 | 23 个页面 | 删除与页头 CTA 重复的 `Request a Quote` 项，导航由 6 项减为 5 项 |
+| guides hub 进导航 | 23 个页面 | `Bulk Order Guide` 项改为 `Guides` 指向 `guides/index.html` |
+
+**目录入口的最终分布**（不靠页脚，靠面包屑 + 语境按钮）：
+
+```
+面包屑        Home / Products / Custom Pins          ← 目录项可点，指向 products/index.html
+首页          swag 区块    → All product lines         ← 语境正确
+              factory 区块 → Company overview
+              journal 区块 → All buying guides
+页脚          23 页保持完全一致，无目录项
+```
+
+**提交前检查**覆盖 10 项：JSON-LD 解析、内部链接（含站内绝对链接与 canonical）、图片引用、`ItemList` 条目数与可见性、`FAQPage` 计数、H1 与 canonical 唯一性、sitemap/feed/llms 三者一致、孤岛页检测、面包屑层级、目录 hub 入链数、行尾翻转。任一项不通过则 commit 与 push 被拦截。
+
+新增 `scripts/reachability.py` 输出全站链接图明细：每个页面的入链数、出链数、距首页的层级，以及三个目录 hub 各自被哪些页面链接。当前 23 页中 21 页可达，`404.html` 与 `thank-you.html` 按设计例外。
+
