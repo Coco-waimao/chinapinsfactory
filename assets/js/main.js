@@ -1,12 +1,10 @@
 /**
  * China Pins Factory — site behaviour
- * Navigation drawer, spec builder, FAQ accordion, RFQ feedback, skin switcher.
+ * Navigation drawer, dropdown menus, spec builder, FAQ accordion, RFQ feedback.
  */
 
 (function () {
   'use strict';
-
-  var STORE_KEY = 'cpf-skin';
 
   /* 站点根路径。页面分布在不同层级的子目录里，但 thank-you.html 固定在根目录，
      所以用脚本自身的地址反推根路径：.../assets/js/main.js -> .../
@@ -133,45 +131,7 @@
       }
     });
 
-    /* ------------------------------------------------------- 2. Skin switcher */
-    var skin = document.getElementById('skinSwitcher');
-    var skinToggle = document.getElementById('skinToggle');
-
-    if (skin && skinToggle) {
-      var skinButtons = skin.querySelectorAll('.skin__opt');
-
-      function applySkin(name) {
-        document.documentElement.setAttribute('data-theme', name);
-        skinButtons.forEach(function (btn) {
-          btn.setAttribute('aria-pressed', String(btn.getAttribute('data-skin') === name));
-        });
-        try { localStorage.setItem(STORE_KEY, name); } catch (e) {}
-      }
-
-      skinToggle.addEventListener('click', function () {
-        var open = skin.classList.toggle('is-open');
-        skinToggle.setAttribute('aria-expanded', String(open));
-      });
-
-      skinButtons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          applySkin(btn.getAttribute('data-skin'));
-        });
-      });
-
-      var stored = null;
-      try { stored = localStorage.getItem(STORE_KEY); } catch (e) {}
-      applySkin(stored || document.documentElement.getAttribute('data-theme') || 'ink');
-
-      document.addEventListener('click', function (e) {
-        if (!skin.contains(e.target)) {
-          skin.classList.remove('is-open');
-          skinToggle.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
-
-    /* -------------------------------------------------------- 3. Spec builder */
+    /* -------------------------------------------------------- 2. Spec builder */
     var PROCESS = {
       'hard-enamel': {
         label: 'Hard enamel',
@@ -311,7 +271,7 @@
 
     renderSpec();
 
-    /* ------------------------- 4. Carry the spec over to the RFQ page */
+    /* ------------------------- 3. Carry the spec over to the RFQ page */
     var params = new URLSearchParams(window.location.search);
     if (params.get('process') && document.getElementById('rfqProcess')) {
       var rfqProcess = document.getElementById('rfqProcess');
@@ -330,7 +290,7 @@
       document.getElementById('rfqFinish').value = params.get('finish');
     }
 
-    /* ------------------------------------------------------- 5. FAQ accordion */
+    /* ------------------------------------------------------- 4. FAQ accordion */
     document.querySelectorAll('.faq__item').forEach(function (item) {
       var btn = item.querySelector('.faq__q');
       if (!btn) { return; }
@@ -340,7 +300,7 @@
       });
     });
 
-    /* ------------------------------------------------------ 6. RFQ submission
+    /* ------------------------------------------------------ 5. RFQ submission
        表单通过 Web3Forms 提交。字段名保留业务含义，Web3Forms 会把全部字段
        原样转发到邮箱；其中 name / email 用于称呼和回复地址。
        用 fetch + Accept: application/json 拿到 JSON 响应，成功与失败都能
