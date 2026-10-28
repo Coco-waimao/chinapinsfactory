@@ -55,6 +55,7 @@ PAGES = [
     'company/factory.html',
     'blog/index.html',
     'blog/lapel-pin-sizes-guide.html',
+    'blog/trade-terms-fob-cif-ddp-guide.html',
     'legal/privacy-policy.html',
 ]
 

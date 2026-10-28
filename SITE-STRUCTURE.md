@@ -25,6 +25,7 @@
 | blog/hard-enamel-vs-soft-enamel-pins.html | 已建 | hard enamel vs soft enamel pins | BreadcrumbList + BlogPosting + FAQPage |
 | blog/lapel-pin-sizes-guide.html | 已建 | lapel pin sizes | BreadcrumbList + BlogPosting + FAQPage |
 | blog/custom-challenge-coin-sizes-guide.html | 已建 | custom challenge coin sizes | BreadcrumbList + BlogPosting + FAQPage |
+| blog/trade-terms-fob-cif-ddp-guide.html | 已建 | FOB vs CIF vs DDP | BreadcrumbList + BlogPosting + FAQPage |
 | legal/privacy-policy.html | 已建 | 无 | BreadcrumbList + WebPage |
 | products/custom-metal-badges.html | 已建 | custom metal badges | Organization + Service |
 | products/samples.html | 已建 | custom lapel pin samples | Organization + Service |
@@ -227,7 +228,7 @@
 |---|---|---|
 | 导航 | 买家意图直达 | 4 个顶级项 + 10 个二级项 |
 | 面包屑 | 目录层级 | `Home / 目录 / 当前页` |
-| 页脚 | 平铺实用链接 | 26 页完全一致，无目录项 |
+| 页脚 | 平铺实用链接 | 27 页完全一致，无目录项 |
 
 **导航结构**
 
@@ -897,7 +898,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
   面包屑层级与 JSON-LD `BreadcrumbList` 保持一一对应。
 
-- **页脚保持 26 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 26 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
+- **页脚保持 27 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 27 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
 
 每个目录页因此获得的入口：面包屑（同目录所有兄弟页）+ 首页语境按钮 + 目录内互相引用。
 
@@ -927,7 +928,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
 **新增的硬约束**（写进 `scripts/check.py`）：
 
-- 归一化后的顶级项与二级项集合在 26 页上必须完全一致
+- 归一化后的顶级项与二级项集合在 27 页上必须完全一致
 - nav 块内不得出现 `request-a-quote`（询价入口只有页头 CTA、移动端吸底条与各页语境 CTA）
 - 每页 `is-active` 至多 1 个，`aria-current="page"` 至多 1 个
 - 导航的唯一来源是 `scripts/nav_sync.py`，禁止手改单页 nav 块
@@ -944,7 +945,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 | **P1** | ✅ 电镀 12 色承接页 `products/plating-finishes.html` | 12 个色名以产品页为唯一口径，首页 Spec Builder 与 FAQ 原先各说各的，已一并统一 |
 | **P1** | ✅ 背扣页 `products/backings.html` | 五种背扣与徽章固定方式均来自产品页原文 |
 | **P2** | 钥匙扣 / 奖牌 / 皮带扣 / 袖扣 各自独立成页 | 现在全塞在 `custom-metal-swag.html`，一页扛 6 个词，主词被稀释 |
-| **P2** | 贸易术语页（FOB / CIF / DDP、报关、HS 编码、关税） | 2026 年美国对华关税变动频繁，真时效内容，值得季度复核 |
+| **P2** | ✅ 贸易术语页 `blog/trade-terms-fob-cif-ddp-guide.html` | 2026 年美国对华关税变动频繁，真时效内容，值得季度复核。正文不写税率数字，只指向 USITC 与 WCO 的权威出处 |
 | **P2** | 成本构成页（**不写单价**，写「什么决定报价」：尺寸 / 线宽 / 色数 / 镀层 / 厚度 / 数量 / 包装 / 模具 / 运费） | 与「不公开价格」不冲突：讲构成不报价，却能吃到 cost 类意图。全站最值得重新取舍的一处 |
 | **P3** | 场景页（企业活动 / 校园社团 / 婚礼 / 球队 / 公益募款 / 粉丝周边）、展会页、案例页 | 搜索量大但竞争激烈，等前两档站稳再打 |
 
@@ -1031,7 +1032,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 | 下拉交互 | `assets/js/main.js` | 显式展开状态、`aria-expanded` 同步、`Esc` 关闭 |
 | 改写 23 页导航 | 23 个 HTML | 每页 +36/-5 行，nav 块整段替换 |
 | 导航校验改造 | `scripts/check.py` | 从「硬编码 5 项文本」改为「归一化链接集合全站一致」 |
-| 响应式实测 | `scripts/nav_responsive.py` | 新增，CDP 驱动，10 页 × 9 断点 = 90 组合 |
+| 响应式实测 | `scripts/nav_responsive.py` | CDP 驱动，14 页 × 9 断点 = 126 组合 |
 | 补机器层目录入口 | `llms.txt` | 新增 `## Directories` 段，列 4 个目录 hub |
 | 修页头断点 | `assets/css/styles.css` | 询价按钮断点 1000px → 880px，隐藏改为保留占位，顺带修掉 880–1000px 区间 1px 横向溢出 |
 
@@ -1079,3 +1080,85 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 `ItemList` 扩到 8 条；sitemap 24 条、feed 16 条、llms.txt 22 个 URL；
 上下文层由珐琅徽章页（正文内链 + linkband）、工艺对比页、设计文件规范页、徽章页各贡献一条。
 三页入链数分别为 materials 6、backings 5、plating-finishes 4，均超过「至少 2 个强相关页」的要求。
+
+### 15.10 第五篇文章与索引页版式改版（2026-10-28）
+
+**文章**：`blog/trade-terms-fob-cif-ddp-guide.html`，主词 `FOB vs CIF vs DDP`。
+这是规划 15.4 队列里的 P2 缺口，也是全站唯一天然需要外链的题材：讲贸易术语
+必须指到「规则是谁定的」和「税率去哪儿查」，不指反而是内容不完整。
+
+| 动作 | 文件 | 性质 |
+|---|---|---|
+| 新文章 | `blog/trade-terms-fob-cif-ddp-guide.html` | 正文 + 3 图 + 6 问 FAQ + 4 处内链 + 4 处外链 |
+| 索引页改版 | `blog/index.html` | 头条大卡 + 4 列网格，H2 去数量词，说明段重写 |
+| 头条卡样式 | `assets/css/styles.css` | `.post-card--lead`、`.post-grid`、`.post-card__flag` |
+| 机器层 | `sitemap.xml` / `feed.xml` / `llms.txt` | 各加一条 |
+| 上下文层 | `blog/how-to-order-custom-lapel-pins-from-china.html`、`blog/custom-challenge-coin-sizes-guide.html` | 各加一条内链 |
+| 图片转码 | `scripts/blog_images.py` | 900×600 jpg 母版 → 1400×933 + 700×467 webp |
+
+**索引页为什么要改版**
+
+新增文章后索引页会有 5 张卡。「每行 4 张」意味着第 5 张必然单独落在第二行，
+右侧留下三个空位。改版后的结构是：
+
+```
+头条大卡（最新文章，图文左右排，通栏）
+下方网格 4 列 × 1 行（其余 4 篇）
+```
+
+这样 5 篇文章填满版面，没有任何空位或孤儿卡。而且以后每加一篇，新文章自动
+变成头条位，网格始终是 4 张一行，版面结构是稳态的。
+
+**H2 与说明段**
+
+- H2 从 `Four guides worth reading before you order` 改为 `What to read before you order`。
+  去掉数量词以后，再加文章也不用改标题。
+- 说明段按三种阅读场景重写：不知道流程的看采购指南，知道流程只想定规格的看
+  尺寸与工艺指南，关心运费与关税的看贸易术语指南。
+
+**内容纪律**
+
+- **正文不写任何税率数字，也不写单价。** 2026 年关税变动频繁，写死数字就是
+  埋过期地雷，而且违反站内「不公开价格」硬规则。只说「税率到 USITC 查、按你
+  的 HS 编码定」。
+- 4 个外链全部实测可达：ICC Incoterms 2020 规则原文、USITC 关税表检索、
+  CBP 进出口指引、WCO HS 制度说明。
+- 内链只链语义相关的：`guides/bulk-order-guide.html`、
+  `blog/how-to-order-custom-lapel-pins-from-china.html`、
+  `products/custom-enamel-pins.html`、`products/request-a-quote.html`。
+
+**入口**：`blog/index.html` 收录为第 5 张（头条位），ItemList `numberOfItems`
+同步为 5。文章自身落 `blog/<slug>.html`，**不进导航**（导航的 Journal 仍是平铺
+入口层稳态不增长）。用户到达路径：导航 Journal → 索引页头条卡 → 文章。
+
+### 15.11 文章侧栏改造（2026-10-29）
+
+**问题**：五篇文章的右侧栏只有一张「On this page」目录卡，正文区 74ch 宽，
+目录卡以外全是空白。买家的下一个动作（继续读 / 下单）没有任何出口。
+
+**方案**：把侧栏从「一个目录卡」升级为「一栏三件」，整栏 sticky：
+
+```
+<aside class="rail">
+  <nav class="toc">On this page</nav>          目录，不单独 sticky
+  <section class="rail__card rail__related">   相关文章 4 条
+  <section class="rail__card rail__cta">       深色下单卡
+</aside>
+```
+
+| 决策 | 理由 |
+|---|---|
+| 右栏 300px → 340px | 340px 才放得下「标题 + 日期」并排的 Related 行 |
+| 整栏 sticky，目录不再单独 sticky | 目录跟着 Related 和 CTA 一起走，读到正文底部时三者仍同屏 |
+| Related 列 4 条 = 站内其余 4 篇 | 每篇都指向别的文章，站内文章间形成闭环，不引出站 |
+| CTA 卡用深色 `--ink-800` 底 | 与旁边白卡拉开层级，一眼看到是行动召唤不是内容 |
+| CTA 只给「提交需求」和「先打一件样品」两个动作 | 样品页确实存在且不设起订量，两者都有站内依据 |
+
+**相关数据纪律**：Related 的标题按站内各页 H1 口径简写，日期直接取各页
+`datePublished`，不另编一套。
+
+**窄屏降级**：≤1100px 侧栏落到正文下方堆叠，卡片限宽 460px（不撑满正文
+measure），≤640px 解除限宽。
+
+**高度控制**：最长的一篇（11 条目录）侧栏总高 818px，在 900px 视口内完整可见；
+超出时侧栏自身滚动，滚动条做低调处理。

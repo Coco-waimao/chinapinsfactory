@@ -104,12 +104,12 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 
 ## 导航维护
 
-导航的唯一来源是 `scripts/nav_sync.py`。**不要手改单个页面的 nav 块**，26 页手改必然漂移，提交前检查会拦下来。
+导航的唯一来源是 `scripts/nav_sync.py`。**不要手改单个页面的 nav 块**，27 页手改必然漂移，提交前检查会拦下来。
 
 ```bash
-python scripts/nav_sync.py           # 按菜单模型批量重写 26 页导航
+python scripts/nav_sync.py           # 按菜单模型批量重写 27 页导航
 python scripts/nav_sync.py --check   # 只报告差异，不落盘
-python scripts/nav_responsive.py     # 无头浏览器实测：10 页 × 9 断点 = 90 组合
+python scripts/nav_responsive.py     # 无头浏览器实测：14 页 × 9 断点 = 126 组合
 ```
 
 增删二级项只改 `scripts/nav_sync.py` 里的 `NAV_GROUPS` / `NAV_FLAT`，然后跑一次重写。`nav_responsive.py` 会检查横向溢出、导航与页头按钮的可见性、面包屑高度是否恒定、下拉面板是否越界、移动端手风琴是否真的展开。改完导航结构跑一次。

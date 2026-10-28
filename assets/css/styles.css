@@ -1195,6 +1195,80 @@ p { color: var(--text-2); }
 .post-card__more span { transition: transform .22s ease; }
 .post-card:hover .post-card__more span { transform: translateX(4px); }
 
+/* The blog index leads with the newest article as a full-width card, then
+   runs the rest in a four-column grid. Four cards fit the 1280px
+   container exactly, so the row never leaves a gap on the right. A fifth
+   article becomes the headline instead of stranding a lone card on a
+   second row. */
+.post-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 30px;
+}
+.post-grid > * { min-width: 0; }
+
+.post-card--lead {
+  display: grid;
+  grid-template-columns: 42% minmax(0, 1fr);
+  align-items: stretch;
+}
+.post-card--lead .post-card__media {
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 260px;
+}
+.post-card--lead .post-card__body {
+  padding: 34px 38px;
+  justify-content: center;
+}
+.post-card--lead .post-card__title {
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  margin-bottom: 12px;
+}
+.post-card--lead .post-card__excerpt {
+  font-size: .95rem;
+  line-height: 1.68;
+  max-width: 62ch;
+}
+/* In a four-column row each card body is about 246px wide, which is not
+   enough room for the full meta line. The reading time is dropped there
+   and the date keeps a shortened month, so the line stays on one row
+   instead of wrapping the date into a stack of fragments. */
+.post-grid .post-card__meta {
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: .66rem;
+  letter-spacing: .06em;
+}
+.post-grid .post-card__meta > span[aria-hidden="true"] { display: none; }
+.post-grid .post-card__meta > span:last-child { display: none; }
+/* the full date is kept for the machine readable datetime attribute and
+   for assistive technology, but the short form is what gets painted */
+.post-grid .post-card__meta > time {
+  font-size: 0;
+}
+.post-grid .post-card__meta > time::after {
+  content: attr(data-short);
+  font-size: .66rem;
+}
+
+.post-card__flag {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  color: var(--accent-700);
+  font-family: 'Manrope', sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+
 /* --------------------------------------------------------------------------
    20. Footer
    -------------------------------------------------------------------------- */
@@ -1382,8 +1456,8 @@ p { color: var(--text-2); }
 .article { padding: 68px 0 84px; }
 .article__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 64px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 56px;
   align-items: start;
 }
 .article__body { max-width: 74ch; }
@@ -1474,6 +1548,93 @@ p { color: var(--text-2); }
 }
 .toc a:hover { color: var(--ink-800); }
 
+
+/* Side rail: contents, related articles, order card */
+.rail {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+  padding-right: 4px;
+}
+.rail::-webkit-scrollbar { width: 6px; }
+.rail::-webkit-scrollbar-track { background: transparent; }
+.rail::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 3px;
+}
+.rail .toc { position: static; padding: 18px 20px; }
+.rail .toc li { margin-bottom: 5px; }
+.rail .toc ol { padding-left: 0; }
+.rail .toc a { font-size: .86rem; }
+.rail__card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.rail__title {
+  font-family: 'Manrope', sans-serif;
+  font-size: .73rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+.rail__related { list-style: none; padding: 0; margin: 0; }
+.rail__related li {
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+.rail__related li:first-child { padding-top: 0; border-top: 0; }
+.rail__related li:last-child { padding-bottom: 0; }
+.rail__related a {
+  font-size: .87rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--ink-800);
+}
+.rail__related a:hover { color: var(--accent-700); }
+.rail__related span {
+  flex: 0 0 auto;
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.rail__cta {
+  background: var(--ink-800);
+  border-color: var(--ink-800);
+  color: var(--on-dark);
+}
+.rail__cta .rail__title { color: var(--accent-500); }
+.rail__cta p {
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--on-dark-2);
+  margin: 0 0 12px;
+}
+.rail__cta .btn { width: 100%; }
+.rail__cta__link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--on-dark-2);
+}
+.rail__cta__link:hover { color: var(--accent-500); }
 /* Article meta header */
 .post-meta {
   display: flex;
@@ -1653,6 +1814,11 @@ p { color: var(--text-2); }
 @media (max-width: 1100px) {
   .article__layout { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .toc { position: static; }
+  .rail { position: static; max-height: none; overflow: visible; padding-right: 0; }
+  /* stacked under the body, the cards must not stretch the full measure
+     of the article column */
+  .rail > * { max-width: 460px; }
+  .rail .toc { width: 100%; }
   .rows__item { grid-template-columns: 72px minmax(0, 1fr); gap: 22px; }
   .rows__media { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
 }
@@ -1670,7 +1836,27 @@ p { color: var(--text-2); }
   .article__body p { font-size: .97rem; }
   .rows__item { grid-template-columns: minmax(0, 1fr); }
   .author-box { flex-direction: column; }
+  .rail > * { max-width: none; }
 }
+
+@media (max-width: 1240px) {
+  .post-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .post-card--lead { grid-template-columns: minmax(0, 1fr); }
+  .post-card--lead .post-card__media {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: 0;
+  }
+  .post-card--lead .post-card__body { padding: 26px 24px; }
+}
+
+@media (max-width: 640px) {
+  .post-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
 
 /* --------------------------------------------------------------------------
    26. Responsive
