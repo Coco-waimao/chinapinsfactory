@@ -228,7 +228,7 @@
 |---|---|---|
 | 导航 | 买家意图直达 | 4 个顶级项 + 10 个二级项 |
 | 面包屑 | 目录层级 | `Home / 目录 / 当前页` |
-| 页脚 | 平铺实用链接 | 27 页完全一致，无目录项 |
+| 页脚 | 平铺实用链接 | 28 页完全一致，无目录项 |
 
 **导航结构**
 
@@ -898,7 +898,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
   面包屑层级与 JSON-LD `BreadcrumbList` 保持一一对应。
 
-- **页脚保持 27 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 27 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
+- **页脚保持 28 页完全一致。** 全站页脚结构只有一个变体（结构签名校验），改它必须 28 页同步改且不能只改部分页。目录入口放在面包屑后，页脚无需任何改动。
 
 每个目录页因此获得的入口：面包屑（同目录所有兄弟页）+ 首页语境按钮 + 目录内互相引用。
 
@@ -928,7 +928,7 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 
 **新增的硬约束**（写进 `scripts/check.py`）：
 
-- 归一化后的顶级项与二级项集合在 27 页上必须完全一致
+- 归一化后的顶级项与二级项集合在 28 页上必须完全一致
 - nav 块内不得出现 `request-a-quote`（询价入口只有页头 CTA、移动端吸底条与各页语境 CTA）
 - 每页 `is-active` 至多 1 个，`aria-current="page"` 至多 1 个
 - 导航的唯一来源是 `scripts/nav_sync.py`，禁止手改单页 nav 块
@@ -948,6 +948,36 @@ document.querySelectorAll('[data-theme-set]').forEach((btn) => {
 | **P2** | ✅ 贸易术语页 `blog/trade-terms-fob-cif-ddp-guide.html` | 2026 年美国对华关税变动频繁，真时效内容，值得季度复核。正文不写税率数字，只指向 USITC 与 WCO 的权威出处 |
 | **P2** | 成本构成页（**不写单价**，写「什么决定报价」：尺寸 / 线宽 / 色数 / 镀层 / 厚度 / 数量 / 包装 / 模具 / 运费） | 与「不公开价格」不冲突：讲构成不报价，却能吃到 cost 类意图。全站最值得重新取舍的一处 |
 | **P3** | 场景页（企业活动 / 校园社团 / 婚礼 / 球队 / 公益募款 / 粉丝周边）、展会页、案例页 | 搜索量大但竞争激烈，等前两档站稳再打 |
+
+### 15.4.1 写一篇 blog 的固定流程（2026-10-30 定案）
+
+**这个流程以后不再逐次讨论，用户说「按流程来」就直接照做。**
+
+| 阶段 | 动作 | 谁做 | 产出 |
+|---|---|---|---|
+| 1 | **选题与规划**。从 15.4 队列里挑缺口，先核实站内有没有足够数据撑起整篇，再给用户看：主词、结构、每个数字的站内出处、内链外链清单、入口位置、**要不要配图** | AI | 规划文本，等用户拍板 |
+| 2 | **用户确认规划** | 用户 | 拍板选题与配图方案 |
+| 3 | **生成图片母版**。900×600 JPG，落在 `raw-images/<slug>/masters/`，**必须带文件名语义**（如 `blog-cost-quote.jpg`） | AI | 母版 JPG + PNG 原图 |
+| 4 | **用户去水印**。AI 生成的图右下角有「AI生成 WORKBUDS」水印，用户处理完放回原位 | 用户 | 去水印后的母版 |
+| 5 | **转码**。跑 `scripts/blog_images.py`，输出 1400×933 + 700×467 的 webp 与 jpg | AI | `assets/images/` 下 3 个文件/图 |
+| 6 | **写正文与接线**。正文 + 内链 2–5 条 + 外链 1–4 条 + FAQ + CTA，机器层（sitemap / feed / llms.txt）同步，索引页收录 | AI | 全部代码改动 |
+| 7 | **全量校验**。`check.py` 11 项 + `nav_responsive.py` + 截图肉眼过一遍 | AI | 校验报告 |
+| 8 | **给用户看效果**，展示页面链接与图片 | AI → 用户 | 等确认 |
+| 9 | **提交并 push**。用户确认后才动 git，commit message 不带任何智能体署名 | AI | commit + push |
+
+**硬约束**（每一步都要守住）：
+
+- **正文不出现任何单价、单价区间、百分比成本或汇率**。讲「什么决定报价」，不报数。
+- **不写具体关税数字**。关税只指向 USITC / WCO 等权威出处。
+- **每个数字都要有站内出处**，先 grep 核实再写。不够就换角度，不够就少写。
+- **不编造工厂参数**（产能、设备台数、认证、交期）。
+- 规划阶段**必须问配图方案**，不要自作主张。
+- 母版文件名要有语义，脚本里用显式映射，不要靠 glob 顺序。
+- 提交前跑 `check.py`，不要上线后再补。
+
+**入口规则**：新文章进 `blog/index.html`（新文章自动成为头条大卡），**不进导航**，不进首页 Journal 精选（精选是人工挑的，不自动轮换）。机器层由 sitemap / feed / llms.txt 收录，上下文层由 2–5 个强相关页内链。
+
+---
 
 ### 15.5 新内容上线清单
 
@@ -1162,3 +1192,43 @@ measure），≤640px 解除限宽。
 
 **高度控制**：最长的一篇（11 条目录）侧栏总高 818px，在 900px 视口内完整可见；
 超出时侧栏自身滚动，滚动条做低调处理。
+
+### 15.12 第六篇 blog 与 rows--lines 变体（2026-10-30）
+
+**新文章**：`blog/lapel-pin-cost-factors-guide.html`
+《What actually determines the price of a custom lapel pin》。主词
+`custom lapel pin cost factors`，讲报价构成但不报任何数。
+
+**选题来源**：15.4 队列里那条 P2「成本构成页」。站内原本有三处零散提到成本
+构成（FAQ 的定价问答、批量下单指南 Stage 3、询价页的一句 "breaks down
+tooling, production, plating, packaging and freight"），各说半句。新文章把
+这五条线拆开逐个讲，并落到「九个变量里哪四个你还能改」这个可执行结论上。
+
+**数据出处（正文零单价、零百分比、零汇率）**：
+
+| 说法 | 出处 |
+|---|---|
+| 黄铜/铁 0.3 mm、不锈钢 0.4 mm | `products/materials.html` |
+| 硬珐琅 4 色、软珐琅 6 色、线宽 0.3 mm | `guides/design-file-specs.html` |
+| 12 种电镀 | `products/plating-finishes.html` |
+| 模具归档三年 | `products/materials.html` |
+| 样品费抵扣 | `products/samples.html` |
+| 四种包装 | `guides/faq.html` |
+| 7–10 工作日 | `guides/process-comparison.html` |
+
+**外链**：World Bank 大宗商品数据（金属价如何传导到报价）、USITC HTS（关税自查）。
+上一轮用过的 CBP 子页现被 Akamai 拦（403），未再引用。
+
+**新组件 `.rows--lines`**：`.rows__item` 原本是三列 grid（92px 编号列 +
+内容列 + 260px 媒体列），给「只有文字没有图」的场景用时正文会落进 92px 的
+编号列里被挤成一条。新增两列变体，56px 编号 + 满宽正文，编号用
+`.rows__num`。**以后写只有文字的条目列表用这个类，不要直接用 `.rows`。**
+
+**Related 列表随文章数增长**：侧栏 Related 从 4 条变 5 条（文章数减一），
+每篇都列其余全部，按日期倒序。标题沿用各页 H1 口径的简写，日期取各页
+`datePublished`。
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（6 条，position 1–6），
+机器层由 sitemap / feed / llms.txt 收录，上下文层由 `guides/faq.html`
+（JSON-LD 与可见正文两处同步改）和 `guides/bulk-order-guide.html` 各加一条
+内链。不进导航，不进首页 Journal 精选。

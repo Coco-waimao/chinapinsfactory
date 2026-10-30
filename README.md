@@ -104,15 +104,37 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 
 ## 导航维护
 
-导航的唯一来源是 `scripts/nav_sync.py`。**不要手改单个页面的 nav 块**，27 页手改必然漂移，提交前检查会拦下来。
+导航的唯一来源是 `scripts/nav_sync.py`。**不要手改单个页面的 nav 块**，28 页手改必然漂移，提交前检查会拦下来。
 
 ```bash
-python scripts/nav_sync.py           # 按菜单模型批量重写 27 页导航
+python scripts/nav_sync.py           # 按菜单模型批量重写 28 页导航
 python scripts/nav_sync.py --check   # 只报告差异，不落盘
 python scripts/nav_responsive.py     # 无头浏览器实测：14 页 × 9 断点 = 126 组合
 ```
 
 增删二级项只改 `scripts/nav_sync.py` 里的 `NAV_GROUPS` / `NAV_FLAT`，然后跑一次重写。`nav_responsive.py` 会检查横向溢出、导航与页头按钮的可见性、面包屑高度是否恒定、下拉面板是否越界、移动端手风琴是否真的展开。改完导航结构跑一次。
+
+## 写一篇新 blog 的流程
+
+固定流程，不再逐次讨论。完整版见 `SITE-STRUCTURE.md` 15.4.1。
+
+1. **规划**：从 `SITE-STRUCTURE.md` 15.4 的队列里挑缺口，先 grep 核实站内数据撑不撑得起整篇，给用户看主词、结构、每个数字的出处、内链外链、入口位置，**并问配图方案**
+2. **用户拍板**选题与配图
+3. **AI 生成 900×600 JPG 母版**，落在 `raw-images/<slug>/masters/`，文件名要有语义（如 `blog-cost-quote.jpg`）
+4. **用户去水印**（AI 生成的图右下角有「AI生成 WORKBUDS」水印），放回原位
+5. **AI 转码**：跑 `scripts/blog_images.py`，输出 1400×933 + 700×467 的 webp 与 jpg 到 `assets/images/`
+6. **AI 写正文与接线**：内链 2–5 条、外链 1–4 条、FAQ、CTA，同步 sitemap / feed / llms.txt，索引页收录
+7. **AI 全量校验**：`check.py` + `nav_responsive.py` + 截图肉眼过一遍
+8. **给用户看效果**，等确认
+9. **用户确认后**才 commit 并 push
+
+红线：正文**不出现任何单价、单价区间、百分比成本或汇率**，讲「什么决定报价」不报数；不写具体关税数字；每个数字都要有站内出处；不编造工厂参数。
+
+入口：新文章进 `blog/index.html`（自动成为头条大卡），**不进导航**，不进首页 Journal 精选。
+
+```bash
+python scripts/blog_images.py --slug cost-factors   # 转码某篇文章的母版
+```
 
 ## 部署
 
