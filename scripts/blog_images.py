@@ -39,9 +39,14 @@ SLUGS = {
         'blog-cost-sizes',
         'blog-cost-packaging',
     ],
+    'quality-check': [
+        'blog-quality-inspection',
+        'blog-quality-plating',
+        'blog-quality-colour',
+    ],
 }
 
-DEFAULT_SLUG = 'cost-factors'
+DEFAULT_SLUG = 'quality-check'
 
 
 def master_dir(slug):

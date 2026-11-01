@@ -1232,3 +1232,56 @@ tooling, production, plating, packaging and freight"），各说半句。新文�
 机器层由 sitemap / feed / llms.txt 收录，上下文层由 `guides/faq.html`
 （JSON-LD 与可见正文两处同步改）和 `guides/bulk-order-guide.html` 各加一条
 内链。不进导航，不进首页 Journal 精选。
+### 15.13 第七篇 blog：出货前的质检与验收（2026-11-01）
+
+**新文章**：`blog/lapel-pin-quality-inspection-guide.html`
+《How custom lapel pins are inspected before they ship》。主词
+`custom lapel pin quality inspection`。讲的是**买家侧**的收货不确定性怎么被
+消除，而不是我们自己车间里怎么干活。
+
+**选题来源**：15.4 队列里没有这一条，是从站内已有的零散内容里识别出来的缺口。
+质检这件事站内原本有四处提到，但都是半句：FAQ 一条问答、工厂页一张质检节点
+表、样品页一句"sample is credited"、批量下单指南的付款结构。买家问"我收到的
+东西凭什么可信"，站内没有一篇文章正面回答。新文章把这四处合成一条完整链路。
+
+**数据出处（正文零单价、零百分比成本、零汇率）**：
+
+| 说法 | 出处 |
+|---|---|
+| 六道质检节点（冲压/抛光/电镀/上色/组装/装箱） | `company/factory.html` |
+| 24 台点胶机器人 + 18 名手工上色技师 | `company/factory.html` |
+| 每挂具 XRF 测铅 | `company/factory.html` |
+| 100% 逐件检查、日光 LED 放大镜 | `company/factory.html` |
+| ISO 9001:2015 / BSCI / RoHS | `company/factory.html` |
+| 珐琅在一个 Pantone step 内 | `guides/process-comparison.html` |
+| 5 种背扣、蝴蝶扣带橡胶帽 | `products/backings.html` |
+| 样品费抵扣、12 色成品样品套 | `products/samples.html` |
+| 定金/尾款结构，尾款在验货通过后 | `guides/bulk-order-guide.html` |
+| 检验员姓名上批次记录 | `guides/faq.html` |
+
+**外链**（均为政府/标准机构一手页面，逐个 fetch 验证过可访问）：
+CPSC 总铅含量、欧盟 RoHS 指令、EUR-Lex 玩具安全指令 2009/48/EC。
+ISO 9001 页面上 2015 版已被 2026 版取代（`iso.org/standard/62085.html` 标
+Withdrawn），**正文不引 ISO 链接**，只写证书名，避免引到一个已撤回版本的页面。
+
+**图片**：ImageGen 端点当时不可用（连续 9 次 fetch failed）。改用站内
+`raw-images/` 里**已有但从未上线**的 AI 原图裁切，右下角「AI生成 WORKBUDS」
+水印正好落在 x>1410 之外，裁到 1400 宽即自然避开，**无需用户去水印**。
+三张母版：`blog-quality-inspection`（质检放大镜）、`blog-quality-plating`
+（电镀挂具）、`blog-quality-colour`（珐琅色盘）。
+`scripts/blog_images.py` 新增 `quality-check` slug，DEFAULT_SLUG 也改为它。
+
+**Related 列表扩到 6 条**：文章数变 7，Related 规则是「其余全部、按日期倒序」，
+所以 6 篇旧文章的侧栏全部同步加了一条，文案统一为 "How pins are inspected"
++ "1 Nov 2026"。**这个数字以后每加一篇都要全站同步改，不要只改新文章。**
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（7 条，position 1–7），
+旧头条（成本构成）降为网格第一张。机器层由 sitemap / feed / llms.txt 收录。
+上下文层新增 4 条内链：`guides/faq.html`、`company/factory.html`、
+`products/samples.html`、`guides/bulk-order-guide.html`。
+不进导航，不进首页 Journal 精选。
+
+**校验结果**：check.py 11 项全绿（29 页、309 张图片引用、FAQPage 14、
+feed 19 条、llms.txt 25 URL、sitemap 27 条）；nav_responsive.py 126 组合通过；
+1440/900/390 三宽度实测横向溢出均为 0px。移动端表格超出视口是
+`.table-wrap` 的 `overflow-x:auto` 既有设计，与其余 4 篇博客文章一致。
