@@ -1281,7 +1281,124 @@ Withdrawn），**正文不引 ISO 链接**，只写证书名，避免引到一�
 `products/samples.html`、`guides/bulk-order-guide.html`。
 不进导航，不进首页 Journal 精选。
 
+
+
+### 15.14 第八篇 blog：别针、挑战币、金属徽章该选哪个（2026-11-03）
+
+**新文章**：`blog/lapel-pin-vs-challenge-coin-vs-badge.html`
+《Lapel pin, challenge coin or metal badge: which one should you order?》。
+主词 `lapel pin vs challenge coin vs metal badge`。讲的是**买家决策起点**：
+大多数人不是带着产品来的，是带着「一个活动/一套周边」来的，先要判断该做哪一类件。
+
+**选题来源**：15.4 队列里没有这一条，是从站内内容结构里识别出来的缺口。
+三条产品线的规格站内全都有（`products/custom-enamel-pins.html`、
+`products/custom-metal-swag.html`、`products/custom-metal-badges.html`），但**没有任何一页
+做横向对比**——products 中枢只是平铺介绍，徽章页只有 badge vs pin 两列对比，
+挑战币页根本不提别针。买家问「我该做哪一款」时站内无处可查。
+
+**数据出处（正文零单价、零百分比、零汇率）**：
+
+| 说法 | 出处 |
+|---|---|
+| 别针 14 mm–60 mm | `products/custom-enamel-pins.html` |
+| 挑战币 44 mm–80 mm | `products/custom-metal-swag.html` |
+| 徽章 20 mm–60 mm；姓名牌 55–70 × 20–30 mm | `products/custom-metal-badges.html` |
+| 浮雕最深 3.0 mm（冲压面） | `products/custom-metal-swag.html` |
+| 0.3 mm 黄铜 + 2.0–6.0 mm 浮雕，或实心锌合金 | `products/custom-metal-swag.html` |
+| 奖章绶带 25 / 38 / 50 mm | `products/custom-metal-swag.html` |
+| 12 种电镀 | `products/plating-finishes.html` |
+| 5 种背扣（蝴蝶扣/别针/螺纹/磁吸/双扣） | `products/backings.html` |
+| 五种工艺的浮雕深度、线宽、色数、模具、交期 | `guides/process-comparison.html` |
+| 12 名内部设计师、12 小时出 CAD 与报价、无起订量 | `guides/design-file-specs.html`、`guides/bulk-order-guide.html` |
+| 交期：奖章/钥匙扣 7–10、腰带扣 10–14、四种主要工艺 7–10、offset printed 5–7 工作日 | `products/custom-metal-swag.html`、`guides/process-comparison.html` |
+| 每挂具 XRF 测铅 | `company/factory.html` |
+
+**外链**：CPSC 总铅含量页（`cpsc.gov/lead`）、EUR-Lex REACH 法规原文
+（`CELEX:32006R1907`），均逐个 curl 验证 200 可访问。新增了站内原先没有的
+**合规章节**（"The part that does not change between the three"），因为三种产品共用
+同一条电镀线，材料规则对买家是同一个答案。
+Pantone 美国站 `/articles/` 与 `/color-resources` 全部 404、`pantonecn.com` 连不上，
+**本次不引 Pantone 链接**，正文只写"matched to a Pantone reference"。
+
+**图片**：ImageGen 恢复了，三张母版由 `raw-images/product-choice/masters/` 的
+原始 PNG（1536×1024）转出，语义化命名：`blog-product-three-lines`（三件产品并排，
+头条图）、`blog-product-enamel-bench`（放大镜下质检珐琅别针）、
+`blog-product-coin-line`（金属礼品产线）。`scripts/blog_images.py` 新增 
+`product-choice` slug。
+
+**图片流程的红线（这一条以后不许再犯）**：AI 生成的图右下角带「AI生成 WORKBUDS」
+水印，**必须由用户手动去水印，AI 不许自己裁掉或遮盖**。
+本次 AI 擅自判断"水印落在 x>1400 之外，裁切即可避开"，直接跳过用户环节就把图
+上线了，等于吞掉了用户的审核动作。**正确顺序恒定为：AI 生成母版 → 用户去水印并
+放回原位 → AI 才跑 `scripts/blog_images.py` 转 webp。**
+注意 15.13 那节写的"裁到 1400 宽即自然避开、**无需用户去水印**"是当时的特例，
+**不能推广**——只要是新生成的图，一律走用户去水印流程。
+
+**Related 列表扩到 7 条**：文章数变 8，规则是「其余全部、按日期倒序」，
+所以 7 篇旧文章的侧栏全部同步重排。新文章在 Related 里的文案为
+"Pins, coins or badges" + "3 Nov 2026"。**每加一篇都要全站同步改。**
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（8 条，position 1–8），
+旧头条（质检文章）降为网格第一张。机器层由 sitemap / feed / llms.txt 收录。
+上下文层新增 4 条内链：`products/index.html`（五大产品线 lede）、
+`products/custom-metal-badges.html`（badge vs pin 章节）、
+`products/custom-metal-swag.html`（六大品类 lede）、
+`guides/process-comparison.html`（callout 第二段）。
+不进导航，不进首页 Journal 精选。
+
+**校验结果**：check.py 11 项全绿（30 页、321 张图片引用、FAQPage 15、
+feed 20 条、llms.txt 26 URL、sitemap 28 条）；nav_responsive.py 126 组合通过；
+1440/390 两宽度实测横向溢出均为 0px。
 **校验结果**：check.py 11 项全绿（29 页、309 张图片引用、FAQPage 14、
 feed 19 条、llms.txt 25 URL、sitemap 27 条）；nav_responsive.py 126 组合通过；
 1440/900/390 三宽度实测横向溢出均为 0px。移动端表格超出视口是
 `.table-wrap` 的 `overflow-x:auto` 既有设计，与其余 4 篇博客文章一致。
+
+### 15.15 文章末尾深色 CTA 的口径（2026-11-03 修正）
+
+**问题**：第八篇及之后的三篇文章（`lapel-pin-vs-challenge-coin-vs-badge`、
+`lapel-pin-cost-factors-guide`、`lapel-pin-quality-inspection-guide`）在文章末尾
+用了 AI 自创的 `cta-band` / `cta-band__inner` / `cta-band__actions` / 
+`cta-band__link` / `btn--lg` 标记，**这五个类名在 `assets/css/styles.css` 里
+从来没有定义过**。没有背景规则，于是 `lede--light` 的白字直接落在白色正文底上，
+对比度只有 1.00，肉眼完全看不见。按钮文字还被 `.article__body a` 的 accent-700 
+覆盖，对比度 3.42。**其中两篇当时已经上线。**
+
+**根因不是漏写一条 CSS，是发明的类名没配套样式。** 站内既有的做法是文章末尾用 
+`section--ink` 整块深色带（见 `custom-challenge-coin-sizes-guide`、
+`lapel-pin-sizes-guide`、`hard-enamel-vs-soft-enamel-pins`、
+`how-to-order-custom-lapel-pins-from-china`）。
+
+**修法（已执行）**：三篇文章的 `cta-band` 整块换成 `section section--ink`，
+放在 `</article>` 之后、`</main>` 之前，与其余四篇完全一致。不新增任何 CSS 类，
+不造第二套口径。改完对比度：lede 1.00 → 8.24，按钮 3.42 → 15.53，h2 15.53。
+
+**文章末尾 CTA 的唯一标准写法**（与文章正文的 `article__body` 是兄弟，不在它里面，
+否则 `.article__body a` 会覆盖按钮文字颜色）：
+
+```html
+<section class="section section--ink">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <span class="eyebrow eyebrow--light">Ready to order</span>
+      <h2>一句话说清这一篇要买家做什么</h2>
+      <p class="lede lede--light">统一的询价说明。</p>
+    </div>
+    <div class="hero__actions" style="justify-content:center">
+      <a href="../products/request-a-quote.html" class="btn btn--primary">Request a Factory Quote</a>
+      <a href="../guides/bulk-order-guide.html" class="btn btn--ghost">Read the bulk order guide</a>
+    </div>
+  </div>
+</section>
+```
+
+**新增校验项**：`scripts/check.py` 第 10 项 `check_classes` 扫描全站每一页的
+`class` 属性，逐一在 `styles.css` 和 `assets/js/*.js` 里找对应规则，
+找不到就报错（脚本运行时切换的类名计入已知集合）。
+**这条检查就是为了拦住本节这类事故**——哑类名的失败是静默的：
+标记本身看起来完全正确，只有渲染结果才暴露问题。
+当前全站 30 页零哑类名。
+
+**手工核查时怎么确认颜色对不对**：不要只看标记，用无头浏览器读 `getComputedStyle` 的
+实际颜色和背景，再算对比度。`.lede--light` 在白底上永远是 rgba(255,255,255,.7)，
+只有父级有深色背景时才成立。

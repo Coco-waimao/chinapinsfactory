@@ -473,7 +473,44 @@ def check_nav(pages):
          f'{len(expected_subs)} submenu entries on every page')
 
 
-# ------------------------------------------------------------ 10. line endings
+# ------------------------------------------------------- 10. undefined classes
+def check_classes(pages):
+    """Every class used in the markup must exist in the stylesheet.
+
+    A class name with no rule behind it renders nothing. The failure mode is
+    silent: a block written as `cta-band` with no `.cta-band` rule simply has
+    no background, so light text meant for a dark panel ends up white on
+    white. The markup looks correct, so only the rendered result shows it.
+
+    Class names the scripts toggle at runtime count as defined.
+    """
+    css_path = os.path.join(SITE, 'assets', 'css', 'styles.css')
+    css = open(css_path, encoding='utf-8').read()
+    known = set(re.findall(r'\.([A-Za-z][A-Za-z0-9_-]*)', css))
+
+    js_dir = os.path.join(SITE, 'assets', 'js')
+    for name in sorted(os.listdir(js_dir)):
+        if not name.endswith('.js'):
+            continue
+        js = open(os.path.join(js_dir, name), encoding='utf-8',
+                  errors='replace').read()
+        known.update(re.findall(r'[\'"]([a-z][a-z0-9_-]{2,})[\'"]', js))
+
+    checked = 0
+    for r, f in pages:
+        text = load(f)
+        body = text[text.find('<body'):]
+        used = set()
+        for m in re.finditer(r'class="([^"]+)"', body):
+            used.update(m.group(1).split())
+        for name in sorted(u for u in used if u not in known):
+            fail('classes', f'{r}: class "{name}" has no rule in styles.css')
+        checked += 1
+
+    note(f'class names: {checked} pages checked, every class has a rule')
+
+
+# ------------------------------------------------------------ 11. line endings
 def check_eol(pages):
     """Guard against accidental line ending flips.
 
@@ -541,6 +578,7 @@ def main():
     check_reachability(pages)
     check_crumbs(pages)
     check_nav(pages)
+    check_classes(pages)
     check_eol(pages)
 
     if not QUIET:

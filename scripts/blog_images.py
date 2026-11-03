@@ -44,6 +44,11 @@ SLUGS = {
         'blog-quality-plating',
         'blog-quality-colour',
     ],
+    'product-choice': [
+        'blog-product-three-lines',
+        'blog-product-enamel-bench',
+        'blog-product-coin-line',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'

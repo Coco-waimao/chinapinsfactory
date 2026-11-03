@@ -5,6 +5,14 @@
 # 项目工作记忆目录
 /.workbuddy/
 
+# 中间产物与临时文件（生成过程留档，不属于站点发布内容）
+__pycache__/
+*.pyc
+*.tmp
+*.bak
+*.orig
+*.rej
+
 # 系统与编辑器
 .DS_Store
 Thumbs.db
