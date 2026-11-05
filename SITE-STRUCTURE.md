@@ -1402,3 +1402,63 @@ feed 19 条、llms.txt 25 URL、sitemap 27 条）；nav_responsive.py 126 组合
 **手工核查时怎么确认颜色对不对**：不要只看标记，用无头浏览器读 `getComputedStyle` 的
 实际颜色和背景，再算对比度。`.lede--light` 在白底上永远是 rgba(255,255,255,.7)，
 只有父级有深色背景时才成立。
+
+### 15.16 第九篇 blog：社团与球队徽章怎么定（2026-11-05）
+
+**新文章**：`blog/club-and-team-lapel-pins.html`
+《Custom lapel pins for clubs and teams: a practical guide》。
+主词 `custom lapel pins for clubs and teams`。是**场景篇**：不讲单一工艺，
+讲一个组织怎么把徽章需求拆成会员徽章 / 赛事徽章 / 收藏交换章三套，
+每套的尺寸、工艺、色数、数量、交期和分发方式都不一样。
+
+**选题来源**：15.4 队列里没有，是从站内内容结构里识别出来的缺口。站内三页
+产品规格都齐，但没有一页站在「俱乐部 / 球队」这个买家身份上说话。
+GS-JJ 覆盖的是定价、材料工艺对比、包装、交期、佩戴保养，场景维度是空的。
+
+**数据出处（正文零单价、零百分比、零汇率）**：
+
+| 说法 | 出处 |
+|---|---|
+| 14–60 mm，25 mm 主力尺寸，30 mm 姓名牌起排，35 mm 社团徽章 | `blog/lapel-pin-sizes-guide.html` |
+| 0.3 mm 最小线宽；0.4 mm 不锈钢最薄；渐变做不了；1 mm 以下摄影细节做不了 | `guides/design-file-specs.html` |
+| 12 小时出 CAD 与报价；打样 3–5 工作日；生产 7–10 工作日；加急 5 天 | `company/factory.html`、`guides/bulk-order-guide.html` |
+| 无最低起订量 | `company/factory.html` |
+| 12 种电镀（亮/哑/复古是表面处理不是不同金属） | `products/plating-finishes.html` |
+| 5 种背扣 | `products/backings.html` |
+| 5 种包装方式；模具归档三年，复购不重新开模 | `guides/bulk-order-guide.html` |
+
+**不写具体俱乐部案例**：场景篇最容易翻车的是编客户故事（"某某俱乐部订了 500 枚"）。
+全文用"一个俱乐部通常要三套徽章"这种推演式写法，一个真实案例都没编。
+
+**外链**：CPSC 总铅含量页（`cpsc.gov/lead`）、EUR-Lex REACH 1907
+（`CELEX:32006R1907`）。合规提醒对应儿童成员徽章与赛事徽章。
+
+**图片**：三张母版在 `raw-images/club-team-pins/masters/`，原始 PNG 1536×1024，
+语义化命名 `blog-club-pins-bench`（上色工位近景，头条图）、
+`blog-team-pins-press`（冲压机出模）、`blog-club-pins-inspection`（品控包装台）。
+`scripts/blog_images.py` 新增 `club-team-pins` slug，并改成 JPG / PNG 都认
+（母版是 PNG 时旧代码会报 `master missing`）。本批三张构图刻意与上一篇的
+"三件产品平铺"错开：近景手部 / 工业机械 / 俯视工位。
+
+**Related 列表扩到 8 条**：文章数变 9，规则是「其余全部、按日期倒序」，
+所以 8 篇旧文章的侧栏全部同步重排。新文章在 Related 里的文案为
+"Club and team pins" + "5 Nov 2026"。**每加一篇都要全站同步改。**
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（9 条，position 1–9），
+旧头条（选型对比文章）降为网格第一张。`Blog.blogPost` 数组这次也一并补齐到
+9 条——它此前漏了最近三篇（产品对比、成本构成、贸易条款），只维护了 5 条，
+属于一直没被 `check.py` 覆盖到的盲区。机器层由 sitemap / feed / llms.txt 收录。
+上下文层新增 4 条内链：`products/custom-enamel-pins.html`（五工艺 lede）、
+`products/custom-metal-badges.html`（六大形状 lede）、
+`guides/design-file-specs.html`（文件格式章节）、
+`blog/lapel-pin-sizes-guide.html`（选尺寸章节）。
+不进导航，不进首页 Journal 精选。
+
+**og:title 漏改的坑**：从上一篇模板整页复制后，`og:title` 与 `twitter:title`
+还留着上一篇的 headline（"Lapel Pin, Challenge Coin or Metal Badge..."），
+跟 `<title>` 不一致。模板复制型加页必须同时校验这四个标签：
+`title` / `og:title` / `twitter:title` / JSON-LD `headline`。
+
+**校验结果**：check.py 12 项全绿（31 页、333 张图片引用、ItemList 9、
+FAQPage 16、feed 21 条、llms.txt 27 URL、sitemap 29 条、零哑类名）；
+nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度实测横向溢出均为 0px。

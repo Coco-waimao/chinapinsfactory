@@ -13,6 +13,12 @@ __pycache__/
 *.orig
 *.rej
 
+# 单篇文章的一次性生成脚本（正文、索引接线），用完即弃，不入库
+# 可复用的工具脚本（check.py / nav_sync.py / blog_images.py / related_sync.py
+# / audit_page.py）照常入库
+scripts/build_*_article.py
+scripts/wire_*.py
+
 # 系统与编辑器
 .DS_Store
 Thumbs.db

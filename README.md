@@ -144,6 +144,18 @@ python scripts/nav_responsive.py     # 无头浏览器实测：14 页 × 9 断�
 **验证颜色不要只读标记，用无头浏览器读 `getComputedStyle` 的实际颜色和背景再算对比度。**
 `.lede--light` 在白底上永远是 rgba(255,255,255,.7)，只有父级有深色背景时才成立。
 
+**从上一篇模板整页复制加新页时，标题有四个地方要同时改**：
+`<title>`、`og:title`、`twitter:title`、JSON-LD 的 `headline`。漏改 `og:title`
+不会让页面报错，只是社交分享卡片显示的是上一篇文章的标题——肉眼很难发现。
+加完页 grep 一遍旧 headline 字符串确认没残留。
+
+**`scripts/audit_page.py` 是单页实测工具**：横向溢出、末尾 CTA 的渲染对比度、
+桌面与移动端截图一次跑完。新文章写完跑一次，比翻全页截图快。
+
+```bash
+python scripts/audit_page.py blog/club-and-team-lapel-pins.html
+```
+
 入口：新文章进 `blog/index.html`（自动成为头条大卡），**不进导航**，不进首页 Journal 精选。
 
 ```bash

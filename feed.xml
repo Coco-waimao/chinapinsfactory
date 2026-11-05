@@ -6,7 +6,7 @@
     <description>Guides and technical references from a working China lapel pin and metal badge manufacturer: design file specifications, process comparisons, sizing charts and bulk order guidance.</description>
     <language>en-us</language>
     <copyright>Copyright 2026 China Pins Factory Co., Ltd.</copyright>
-    <lastBuildDate>Tue, 27 Oct 2026 12:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2026 12:00:00 +0000</lastBuildDate>
     <generator>China Pins Factory static site</generator>
     <atom:link href="https://www.chinapinsfactory.com/feed.xml" rel="self" type="application/rss+xml" />
     <image>
@@ -31,6 +31,15 @@
       <pubDate>Tue, 27 Oct 2026 12:00:00 +0000</pubDate>
       <category>Guides</category>
       <description>Hard enamel, soft enamel, die struck, 3D die cast and offset printed pins judged on the same criteria: base metal, relief depth, minimum line width, colour count, durability, tooling and lead time.</description>
+    </item>
+
+    <item>
+      <title>Custom Lapel Pins for Clubs and Teams: A Practical Guide</title>
+      <link>https://www.chinapinsfactory.com/blog/club-and-team-lapel-pins.html</link>
+      <guid isPermaLink="true">https://www.chinapinsfactory.com/blog/club-and-team-lapel-pins.html</guid>
+      <pubDate>Thu, 05 Nov 2026 12:00:00 +0000</pubDate>
+      <category>Journal</category>
+      <description>A club does not order one badge, it orders three. How membership pins, event badges and collector pieces are specified across size, process, colour count, quantity, lead time and packing.</description>
     </item>
 
     <item>

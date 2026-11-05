@@ -49,6 +49,11 @@ SLUGS = {
         'blog-product-enamel-bench',
         'blog-product-coin-line',
     ],
+    'club-team-pins': [
+        'blog-club-pins-bench',
+        'blog-team-pins-press',
+        'blog-club-pins-inspection',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'
@@ -58,9 +63,23 @@ def master_dir(slug):
     return os.path.join(ROOT, 'raw-images', slug, 'masters')
 
 
+def master_path(slug, name):
+    """Find the master for a name.
+
+    The masters have been delivered as both JPG and PNG over the project
+    history, so both extensions are accepted. The JPG wins when both are
+    present, because it is the format every earlier batch was cut in.
+    """
+    for ext in ('.jpg', '.png'):
+        path = os.path.join(master_dir(slug), name + ext)
+        if os.path.isfile(path):
+            return path
+    return os.path.join(master_dir(slug), name + '.jpg')
+
+
 def convert(slug, names):
     for name in names:
-        src = os.path.join(master_dir(slug), name + '.jpg')
+        src = master_path(slug, name)
         if not os.path.isfile(src):
             raise SystemExit('master missing: %s' % src)
 
