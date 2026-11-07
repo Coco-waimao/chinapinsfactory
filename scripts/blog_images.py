@@ -54,6 +54,11 @@ SLUGS = {
         'blog-team-pins-press',
         'blog-club-pins-inspection',
     ],
+    'factory-vs-trader': [
+        'blog-factory-workshop',
+        'blog-plating-line',
+        'blog-inspection-bench',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'

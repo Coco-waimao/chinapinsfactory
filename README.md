@@ -156,6 +156,20 @@ python scripts/nav_responsive.py     # 无头浏览器实测：14 页 × 9 断�
 python scripts/audit_page.py blog/club-and-team-lapel-pins.html
 ```
 
+**模板替换前先看真实字节，别凭肉眼猜**。上一篇的 eyebrow 写的是
+`Club and team · Sourcing`——字面 `·` 字符（U+00B7），不是 `&middot;` 实体。
+按实体去 `str.replace` 会**静默失败**：脚本不报错、`check.py` 全绿、页面也
+正常，只是分类还挂着上一篇的名字。同类还有 `&thinsp;`、`&rsquo;`、`&mdash;`。
+动手前先 `repr()` 一下那段源码：
+
+```python
+d = io.open(f, encoding='utf-8', newline='').read()
+i = d.index('eyebrow--light')
+print(repr(d[i:i+80]))
+```
+
+替换完必须 grep 一遍上一篇文章的旧字符串确认无残留。
+
 入口：新文章进 `blog/index.html`（自动成为头条大卡），**不进导航**，不进首页 Journal 精选。
 
 ```bash

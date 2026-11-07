@@ -6,7 +6,7 @@
     <description>Guides and technical references from a working China lapel pin and metal badge manufacturer: design file specifications, process comparisons, sizing charts and bulk order guidance.</description>
     <language>en-us</language>
     <copyright>Copyright 2026 China Pins Factory Co., Ltd.</copyright>
-    <lastBuildDate>Thu, 05 Nov 2026 12:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 07 Nov 2026 12:00:00 +0000</lastBuildDate>
     <generator>China Pins Factory static site</generator>
     <atom:link href="https://www.chinapinsfactory.com/feed.xml" rel="self" type="application/rss+xml" />
     <image>
@@ -31,6 +31,15 @@
       <pubDate>Tue, 27 Oct 2026 12:00:00 +0000</pubDate>
       <category>Guides</category>
       <description>Hard enamel, soft enamel, die struck, 3D die cast and offset printed pins judged on the same criteria: base metal, relief depth, minimum line width, colour count, durability, tooling and lead time.</description>
+    </item>
+
+    <item>
+      <title>Factory or Trading Company? How to Tell Before You Order</title>
+      <link>https://www.chinapinsfactory.com/blog/factory-vs-trading-company.html</link>
+      <guid isPermaLink="true">https://www.chinapinsfactory.com/blog/factory-vs-trading-company.html</guid>
+      <pubDate>Sat, 07 Nov 2026 12:00:00 +0000</pubDate>
+      <category>Journal</category>
+      <description>A factory quote and a middleman quote look the same on paper. Five questions that separate a real manufacturer from a trading company: who cuts the mould, who owns the plating line, who fills the enamel, who inspects, and who answers for the rush order.</description>
     </item>
 
     <item>

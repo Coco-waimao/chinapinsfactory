@@ -1462,3 +1462,72 @@ GS-JJ 覆盖的是定价、材料工艺对比、包装、交期、佩戴保养�
 **校验结果**：check.py 12 项全绿（31 页、333 张图片引用、ItemList 9、
 FAQPage 16、feed 21 条、llms.txt 27 URL、sitemap 29 条、零哑类名）；
 nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度实测横向溢出均为 0px。
+
+### 15.17 第十篇 blog：怎么分辨工厂和贸易商（2026-11-07）
+
+**新文章**：`blog/factory-vs-trading-company.html`
+《Factory or trading company: how to tell before you order》。
+主词 `how to tell a factory from a trading company`。与前九篇零撞词——
+前九篇占的是尺寸、材质、电镀、背扣、硬软珐琅、成本、质检、贸易术语、
+下单流程、选型对比、社团场景，这篇占「供应商身份验证」。
+
+**选题来源**：15.4 队列里没有。竞品在包装、供应商验证、Pantone 配色、
+工艺对比、价格拆解五个方向都做得深，硬碰没有优势。站内反而有大量
+「自有产线」的硬证据没有文章化——六个车间、22 台 CNC、16 台压机、
+每挂具 XRF、模具归档三年，这些数据散落在 `company/factory.html` 里，
+没有一篇站在买家一侧的文章把它们组织成可执行的核查方法。
+
+**写法上的自我约束（这篇最大的坑）**：题材天然容易写成自我推销。
+处理方式是**通篇站在买家一侧**，写「该问什么、答案意味着什么」，
+自家电厂数据只在「What countable evidence looks like」一节作为
+「一个可验证的例子」出现一次。红旗信号一节写的是通用行业信号，
+不指涉任何具体同行。**不写**任何具体公司名字、不写「某某公司是贸易商」
+这类指控、不写查不到出处的行业统计（竞品那种「74% 的阿里工厂是贸易商」
+没有可靠来源，不引用）。
+
+**数据出处（逐条回查）**：
+
+| 说法 | 出处 |
+|---|---|
+| 2009 年成立、8000㎡ 自有厂房、6 车间、240 万枚年产能、40+ 国家 | `company/factory.html` |
+| 22 台 CNC / SKD11 / 0.01mm / EDM 内部角、模具归档三年 | `company/factory.html` |
+| 16 台 200 吨液压摩擦压机 + 8 台热室锌合金压铸、模具上限 80mm | `company/factory.html` |
+| 12 种电镀、0.2–0.5 micron 镀层 + 铜底、每挂具 XRF | `products/plating-finishes.html`、`company/factory.html` |
+| 24 台点胶机器人 + 18 名手工上色师、Pantone 校准线 | `company/factory.html` |
+| 逐件日光 LED 放大镜检验、背扣拉拔测试、不合格返工 | `company/factory.html` |
+| ISO 9001:2015、BSCI、RoHS；CPSIA / Prop 65 / REACH / EN71-3 按需 | `guides/faq.html` |
+| 打样费与开模费可抵扣、样品单件起 | `products/samples.html` |
+| CAD 12 小时、生产 7–10 工作日、加急 5 天、无起订量 | `guides/bulk-order-guide.html` |
+
+**外链**：CPSC 总铅含量页（`cpsc.gov/lead`）。EN71-3 站内已多处出现，
+本文不重复引。
+
+**图片**：三张母版在 `raw-images/factory-vs-trader/masters/`，原始 PNG
+1536×1024，语义化命名 `blog-factory-workshop`（车间纵深全景，无人，头条图）、
+`blog-plating-line`（挂具浸入镀液槽）、`blog-inspection-bench`（日光灯下
+手持徽章对光 + XRF 探头 + 批次记录）。三张恰好对应文章三条主线——
+自有车间、电镀线自有、逐件检验，图文互相咬合。`scripts/blog_images.py`
+新增 `factory-vs-trader` slug。
+
+**Related 列表扩到 9 条**：文章数变 10，规则是「其余全部、按日期倒序」，
+所以 9 篇旧文章的侧栏全部同步重排。新文章在 Related 里的文案为
+"Factory or trading company" + "7 Nov 2026"。**每加一篇都要全站同步改。**
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（10 条，position 1–10），
+旧头条（社团篇）降为网格第一张。`Blog.blogPost` 同步到 10 条。机器层由
+sitemap / feed / llms.txt 收录。上下文层新增 4 条内链：
+`company/factory.html`（六大车间 lede）、`guides/bulk-order-guide.html`
+（模具 lede）、`products/samples.html`（四种样品 lede）、
+`blog/lapel-pin-quality-inspection-guide.html`（提交前章节）。
+不进导航，不进首页 Journal 精选。
+
+**新踩的坑：模板里的分隔符可能是字面字符**。上一篇的 eyebrow 写的是
+`Club and team · Sourcing`（字面 `·`，U+00B7），不是 `&middot;` 实体。
+按实体去 replace 会静默失败——脚本不报错、页面也不报错，只是 eyebrow
+仍是上一篇的分类。同类还有 `&thinsp;`、`&rsquo;` 等。**做模板替换前
+先 `repr()` 看一下那段源码的真实字节**，别凭肉眼猜。
+
+**校验结果**：check.py 12 项全绿（32 页、345 张图片引用、0 缺失链接、
+ItemList 10、FAQPage 17、feed 22 条、llms.txt 28 URL、sitemap 30 条、
+零哑类名）；nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度
+横向溢出均为 0px；末尾 CTA 说明文字对比度 8.24、按钮 15.53。
