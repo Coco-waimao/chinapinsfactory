@@ -17,6 +17,7 @@ BLOG = os.path.join(ROOT, 'blog')
 
 # slug -> (title shown in the rail, date shown in the rail)
 ARTICLES = {
+    'lapel-pin-artwork-guide': ('Preparing your artwork', '10 Nov 2026'),
     'factory-vs-trading-company': ('Factory or trading company', '7 Nov 2026'),
     'club-and-team-lapel-pins': ('Club and team pins', '5 Nov 2026'),
     'lapel-pin-vs-challenge-coin-vs-badge': ('Pins, coins or badges', '3 Nov 2026'),

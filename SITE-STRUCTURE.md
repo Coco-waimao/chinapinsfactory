@@ -1531,3 +1531,104 @@ sitemap / feed / llms.txt 收录。上下文层新增 4 条内链：
 ItemList 10、FAQPage 17、feed 22 条、llms.txt 28 URL、sitemap 30 条、
 零哑类名）；nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度
 横向溢出均为 0px；末尾 CTA 说明文字对比度 8.24、按钮 15.53。
+### 15.18 第十一篇 blog：画图前必看——图稿怎么准备才能做出来（2026-11-10）
+
+**新文章**：`blog/lapel-pin-artwork-guide.html`
+《How to prepare artwork for custom lapel pins》。
+主词 `how to prepare artwork for custom lapel pins`。与前十篇零撞词——
+前十一篇占的是尺寸、材质、电镀、背扣、硬软珐琅、成本、质检、贸易术语、
+下单流程、选型对比、社团场景、供应商身份验证，这篇占「图稿准备」。
+
+**选题来源**：SITE-STRUCTURE 15.4 队列里的 P0。五家竞品（GS-JJ、bulkcustom、
+maxemblem、pinsfun、miracle-custom）全都有「画图前必看」页，本站一度全无。
+站内 `guides/design-file-specs.html` 已是 P0 规格页，信息量极大但从未
+被文章化。这篇是它的**买家视角长文版**：规格页回答「数字是多少」，
+本文回答「为什么是这个数字」+「你自己怎么查」。
+
+**结构**：11 节 + 7 条 FAQ。核心是「五步自查法」——1:1 打印、量最细线、
+量最小字高、找最窄色块间隙、放大查尖角。这节是本文的原创增量，
+规格页没有。
+
+**数据出处（逐条回查）**：
+
+| 说法 | 出处 |
+|---|---|
+| 0.3mm 线宽绝对下限、0.5mm 以上为目标值 | `guides/design-file-specs.html`、`products/materials.html` |
+| 0.3mm 黄铜 / 0.3mm 铁 / 0.4mm 不锈钢 | `products/materials.html` |
+| 色块可见边 0.3–0.4mm；0.2mm 间隙不可靠；两色间留 0.3mm 裸金属 | `guides/design-file-specs.html` |
+| 5 行文字表（直径 → 最小字高 → 对应 pt） | `guides/design-file-specs.html` |
+| 三件做不出来：珐琅渐变 / 1mm 以下摄影细节 / 色块内尖角 | `guides/design-file-specs.html` |
+| 硬珐琅 4 个 Pantone、软珐琅 6 个 | `guides/design-file-specs.html` |
+| 5 行文件格式表（AI/EPS/PDF 最佳 → 手绘可用） | `guides/design-file-specs.html` |
+| 7 条预检清单 | `guides/design-file-specs.html` |
+| 12 名内部设计师免费重画 | `guides/design-file-specs.html`、`index.html` |
+| 24 台点胶机器人 + 18 名手工上色师；两年后补单颜色一致 | `company/factory.html` |
+| CAD 12 小时出 2D/3D 证明 + 逐项报价；确认前不开模不收开模费 | `guides/bulk-order-guide.html` |
+
+**口径纪律**：本文一律用 `0.3mm`，**不用**首页那三处孤例数据
+（首页写最小线宽 `0.18mm`、挑战币 `38-63mm`、奖牌 `50-115mm`，与全站
+其余 22 处冲突）。首页孤例是既有问题，未在本轮改动，待单独处理。
+本文引挑战币尺寸时一律不出数字，只链接尺寸专文。
+
+**图片**：三张母版在 `raw-images/artwork-spec/masters/`，PNG 1536×1024，
+语义化命名 `blog-artwork-desk`（开发台：屏幕上是矢量图稿与图层面板 +
+桌面实体徽章、色卡、卡尺、放大镜，头条图）、
+`blog-line-width-check`（放大镜下的镀金徽章细线 + 游标卡尺）、
+`blog-colour-match`（日光放大灯下 Pantone 色卡扇 + 五个珐琅徽章）。
+三张分别咬合文章三条主线——图稿怎么给、线宽怎么测、颜色怎么对。
+`scripts/blog_images.py` 新增 `artwork-spec` slug。
+
+**Related 列表扩到 10 条**：文章数变 11，规则是「其余全部、按日期倒序」，
+所以 10 篇旧文章的侧栏全部同步重排。新文章在 Related 里的文案为
+"Preparing your artwork" + "10 Nov 2026"。**每加一篇都要全站同步改。**
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（11 条，position 1–11），
+旧头条（工厂 vs 贸易商）降为网格第一张。`Blog.blogPost` 同步到 11 条。
+机器层由 sitemap / feed / llms.txt 收录。上下文层新增 4 条内链：
+`guides/design-file-specs.html`（正文 + linkband）、
+`blog/lapel-pin-sizes-guide.html`（选尺寸章节）、
+`products/materials.html`（linkband）、
+`blog/club-and-team-lapel-pins.html`（linkband）。
+不进导航，不进首页 Journal 精选。
+
+**新踩的坑：模板自链接可能不存在**。上一轮的做法是把 `href="旧slug.html"`
+替换成新 slug，本篇的模板文章（第十篇）**没有自链接**（Related 列表不含
+自己），所以那条替换的锚点不存在。本轮把 `sub()` 改成**找不到锚点就
+assert 报错**，一跑就暴露出来，改成容错替换即可。这比静默通过可靠：
+以后每次替换都验证命中，模板变了会立刻炸。
+
+**校验结果**：check.py 12 项全绿（33 页、357 张图片引用、0 缺失链接、
+ItemList 11、FAQPage 18、feed 23 条、llms.txt 29 URL、sitemap 31 条、
+零哑类名）；nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度
+横向溢出均为 0px；末尾 CTA 说明文字对比度 8.24、按钮 15.53。
+`btn--primary` 金底白字对比度 2.35 是**全站既有问题**（第十篇同样
+报 LOW），不是本篇引入。
+### 15.19 顺带修掉的历史行尾污染：三个 P1 规格页的双 CR（2026-11-10）
+
+**问题**：`products/backings.html`、`products/materials.html`、
+`products/plating-finishes.html` 三个 P1 规格页的行尾是 `\r\r\n`（双 CR），
+不是正常的 `\r\n`。来源是 `4c7b2d3`（2026-11-05「Add the three P1
+specification pages」）：用文本模式读 CRLF 文件再以 CRLF 写回，换行符被翻倍。
+三个文件各有 187 处双 CR。
+
+**为什么一直没被发现**：`check.py` 第 11 项 `check_eol` 的 `style()` 判定逻辑是
+`crlf == lf 且 crlf > 0 → CRLF`。对双 CR 文件，`\r\r\n` 里 `\r\n` 的计数与
+`\n` 的计数**恰好相等**（每个 `\r\n` 前面多一个孤立 `\r`，不影响两个计数），
+于是被判成 CRLF，静默放过。这个盲区存在了 5 天。
+
+**暴露方式**：本轮给 `products/materials.html` 加 linkband 内链，git diff 显示
+**375 行变更**（188 增 187 删），而实际内容改动只有 1 行。逐字节比对发现
+HEAD 版本第 16 字节起就是 `\r\r\n`。因为 `.gitattributes` 是 `* -text`
+（仓库内容 = 工作区字节），双 CR 被原样提交进了 Git 历史。
+
+**处理**：
+1. `check.py` 第 11 项增加 `b'\r\r\n'` 检测，命中即 fail 并跳过后续比对；
+2. 三个文件用**二进制读、字节级替换**归一化为标准 CRLF；
+3. 验证归一化后与 HEAD 归一化版本**逐字节相同**（`backings`、
+   `plating-finishes` 完全一致，`materials` 仅多 1 行 linkband），
+   确认是纯行尾修复、零内容变化；
+4. `audit_page.py products/backings.html` 实测四断点横向溢出 0px，渲染无变化。
+
+**教训**：写脚本改文件一律二进制读写。文本模式的 `newline=''` 加 CRLF 写回，
+或在 CRLF 文件上跑 `str.replace` 后再写，都会翻倍换行。排查这类问题时，
+`git diff --stat` 的行数量级与实际改动量对不上，就是行尾污染的信号。

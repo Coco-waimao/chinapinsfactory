@@ -59,6 +59,11 @@ SLUGS = {
         'blog-plating-line',
         'blog-inspection-bench',
     ],
+    'artwork-spec': [
+        'blog-artwork-desk',
+        'blog-line-width-check',
+        'blog-colour-match',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'

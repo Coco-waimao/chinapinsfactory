@@ -538,7 +538,11 @@ def check_eol(pages):
         path = os.path.join(SITE, name)
         if not os.path.isfile(path):
             continue
-        cur = style(open(path, 'rb').read())
+        raw = open(path, 'rb').read()
+        if b'\r\r\n' in raw:
+            fail('eol', f'{name}: doubled carriage returns ({raw.count(b"\\r\\r\\n")} lines)')
+            continue
+        cur = style(raw)
         if cur == 'MIXED':
             fail('eol', f'{name}: mixed line endings')
             continue
