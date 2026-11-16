@@ -175,9 +175,29 @@ def check_counts(pages):
             # visible markup = the page minus its own structured data
             visible = re.sub(
                 r'<script type="application/ld\+json">.*?</script>', '', text, flags=re.S)
+
+            # The visible title of the card that each entry points at. When an
+            # entry's url resolves to a visible card, the name has to match
+            # that card's title exactly: Google requires structured data to
+            # describe visible content, and a name copied from another entry
+            # is a mismatch even though the url is valid.
+            card_titles = {}
+            for cu, ct in re.findall(
+                    r'<h3 class="post-card__title">\s*<a href="([^"]+)"[^>]*>(.*?)</a>',
+                    visible, re.S):
+                card_titles[cu.split('/')[-1]] = re.sub(r'<[^>]+>', '', ct).strip()
+
             for item in items:
                 url = re.search(r'"url":\s*"([^"]+)"', item)
                 name = re.search(r'"name":\s*"([^"]+)"', item)
+                if url and name:
+                    key = url.group(1).split('/')[-1]
+                    card = card_titles.get(key)
+                    if card is not None and name.group(1).strip() != card:
+                        fail('itemlist',
+                             f'{r}: ListItem name does not match the visible card '
+                             f'title: {name.group(1)[:50]!r} vs {card[:50]!r}')
+                        continue
                 probe = None
                 if url:
                     probe = url.group(1).split('#')[-1]

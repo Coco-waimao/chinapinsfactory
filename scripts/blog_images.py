@@ -64,6 +64,11 @@ SLUGS = {
         'blog-line-width-check',
         'blog-colour-match',
     ],
+    'plating-finishes': [
+        'blog-plating-tank',
+        'blog-finish-compare',
+        'blog-xrf-test',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'

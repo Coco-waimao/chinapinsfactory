@@ -19,6 +19,9 @@ __pycache__/
 scripts/build_*.py
 scripts/wire_*.py
 
+# 选题台账：本地工作文件，记录已写文章与候选队列，不属于站点内容
+/BLOG-LEDGER.md
+
 # 系统与编辑器
 .DS_Store
 Thumbs.db

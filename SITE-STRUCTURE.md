@@ -1632,3 +1632,92 @@ HEAD 版本第 16 字节起就是 `\r\r\n`。因为 `.gitattributes` 是 `* -tex
 **教训**：写脚本改文件一律二进制读写。文本模式的 `newline=''` 加 CRLF 写回，
 或在 CRLF 文件上跑 `str.replace` 后再写，都会翻倍换行。排查这类问题时，
 `git diff --stat` 的行数量级与实际改动量对不上，就是行尾污染的信号。
+### 15.20 第十二篇 blog：电镀表面处理——12 个色名、机理与「镀层色 ≠ Pantone」（2026-11-16）
+
+**新文章**：`blog/lapel-pin-plating-finishes-guide.html`
+《How to Choose a Plating Finish for Custom Lapel Pins》。
+主词 `how to choose a plating finish for custom lapel pins`。
+8 节 + 7 条 FAQ + 3 张图。与前十一篇零撞词。
+
+**选题来源**：`products/plating-finishes.html` 是站内最大的一块未成文素材。
+调研结论：三个候选里它独有点最多——
+
+- 12 个电镀色名**逐个列出**（全站 11 篇博客从未做过）；
+- 表面处理的**机理**（为什么 antique 只压凹槽、bright/matte 不是两种金属）；
+- **镀层色卡 ≠ Pantone 色号**的分工（金属色靠实物参考判定，珐琅色才对齐 Pantone）。
+
+另两个候选被否：打样（sample vs render 六个维度已散在 4 篇文章讲完，净增量
+最薄）、基础金属（参数在站内被写烂，只是没人换组织角度）。
+
+**结构**：8 节 + 7 条 FAQ。骨架是「三大族群 → 逐色 → 机理 →  microns →
+各工艺可达性 → 怎么下单」。
+
+**数据出处（逐条回查）**：
+
+| 说法 | 出处 |
+|---|---|
+| 12 个色名（shiny 24K gold / matte 24K gold / antique gold / silver / brushed silver / black nickel / matte black nickel / rose gold / copper / antique brass / antique silver / matte ruthenium） | `products/plating-finishes.html` |
+| 镀层 0.2–0.5 micron、铜底打底 | `products/plating-finishes.html` |
+| 每挂具 XRF 检测 | `products/plating-finishes.html`、`company/factory.html` |
+| 同一套 12 种适用珐琅 / 压铸 / 冲压三条工艺 | `products/plating-finishes.html`、`guides/process-comparison.html` |
+| 珐琅色才对齐 Pantone（与镀层色分工） | `products/plating-finishes.html`、`blog/hard-enamel-vs-soft-enamel-pins.html` |
+| 冲压件可抛光 / 拉丝 / 喷砂 / 做旧 / 哑光 | `products/plating-finishes.html` |
+| CAD 12 小时出 2D/3D 证明 + 逐项报价，确认前不开模不收开模费 | `guides/bulk-order-guide.html` |
+
+**口径纪律**：镀层色名一律用产品页正式名 `Shiny 24K gold`。质检篇的
+`bright 24K gold`、价格篇的 `bright gold` 是同一事实的另两种写法，
+**本轮按用户决定不动**，新文章只跟产品页走。
+
+**图片**：三张母版在 `raw-images/plating-finishes/masters/`，PNG 1536×1024，
+语义化命名 `blog-plating-tank`（电镀线：钛挂具悬在琥珀色镀液槽上方、
+水汽、湿地面 —— 头条图，对应「自有产线 + 逐挂具检测」）、
+`blog-finish-compare`（三个同款徽章：镜面亮金 / 全哑光 / 做旧，凹槽压深
+凸起留亮 —— 对应三大族群对比）、
+`blog-xrf-test`（XRF 合金分析仪探头压在徽章背面，旁边卡尺与色卡 ——
+对应「实测而非纸面」）。
+`scripts/blog_images.py` 新增 `plating-finishes` slug。
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（12 条）+ `Blog.blogPost`
+（12 条）。旧头条（图稿那篇）降为网格第一张。**不进导航，不进首页 Journal 精选。**
+
+**Related 列表扩到 11 条**：文章数变 12，规则是「其余全部、按日期倒序」，
+11 篇旧文章侧栏全部重排。
+
+**上下文内链**：新增 4 条 —— `products/plating-finishes.html`（linkband）、
+`guides/process-comparison.html`（linkband）、
+`blog/hard-enamel-vs-soft-enamel-pins.html`（linkband + 正文内链），
+另在正文中链到图稿那篇（珐琅色块下限与镀层的分工）。
+
+**机器层**：sitemap 32 条、feed 24 条、llms.txt 30 URL。
+
+**本轮挖出并修掉的两个既有 bug**：
+
+1. **`blog/index.html` 的 `ItemList` position 5 的 `name` 一直是错的** ——
+   复制粘贴时没改，url 指向「三类对比」那篇却写着「工厂 vs 贸易商」的标题。
+   `check.py` 原来只校验「url 或 name 至少一个出现在可见标记里」，url 命中
+   就放过，所以几轮都没抓到。现在把规则改成 **name 必须与可见卡片标题
+   逐字一致**，url 与 name 都要对——数据已修正，规则已补严。
+2. **`llms.txt` 尾部换行不统一**（插入时用了 LF），已归一化为 CRLF。
+
+**本轮新踩的三个坑**：
+
+1. **块级替换会把起始标记的开括号一起吃掉**。`replace_block(src,
+   '  "mainEntity": [\n', '\n  ]\n}', faq_json)` 把 JSON 数组的 `[`
+   一起替换掉了，FAQPage 缺左括号。**新块必须自己带上 `[`**。
+2. **手工改生成文件会被重跑脚本静默冲掉**。补 XRF 图时直接 Edit 了生成
+   的 HTML，重跑构建脚本后那张图没了。**所有对生成文件的改动都要同步
+   写回构建脚本**，产物要能复现。
+3. **模板文章的绝对 URL 在文件里出现 5 次**（canonical / og:url / hreflang /
+   面包屑 item / `@id` + `mainEntityOfPage`）。只替换第一次会留下 4 处指向
+   上一篇文章的元数据——这类错误 `check.py` 完全查不出来，页面看起来也
+   正常。**绝对 URL 必须全量替换并断言无残留。**
+
+**校验结果**：check.py 12 项全绿（34 页、369 张图片引用、0 缺失链接、
+ItemList 8 处集合、FAQPage 19、feed 24 条、llms.txt 30 URL、sitemap 32 条、
+零哑类名）；nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度
+横向溢出均为 0px；末尾 CTA 说明文字对比度 8.24、按钮 15.53。
+`btn--primary` 金底白字对比度 2.35 是**全站既有问题**，不是本篇引入。
+
+**台账**：新建本地文件 `BLOG-LEDGER.md`（已加 `.gitignore`，不入库），
+记录 12 篇已写文章的主词、已占用主词清单、候选队列、口径冲突台账、
+跨页面遗留项、每加一篇要动的 7 个位置。
