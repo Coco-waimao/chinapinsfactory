@@ -203,6 +203,20 @@ XRF 图时直接 Edit 了生成的 HTML，结果重跑构建脚本时这张图�
 「工厂 vs 贸易商」的标题）的数据溜过了几轮。现在改成 **name 必须与可见
 卡片标题逐字一致**，url 与 name 都要对。
 
+**结构化数据的 description 必须和 meta description 逐字一致。** 本轮发现
+第十二篇（电镀那篇）的 JSON-LD `BlogPosting.description` 里写的是**上一篇
+（图稿）的描述**——构建脚本只替换了 `headline`，漏了 `description`。JSON
+解析查不出来，页面也正常显示，只有 Google 读得到。另有 4 篇文章两处措辞
+不一致（语义相同、字面不同）。现已统一，并在 `check.py` 第 3 项加了规则：
+文章页的 `BlogPosting.description` 必须与该页 `meta description` 逐字一致。
+**规则只作用于 `blog/` 下非 index 的页面**——`blog/index.html` 的
+`Blog.blogPost` 数组里每条自带描述，与索引页的 meta 无关，第一版规则
+误伤了它。
+
+**每加一篇要顺手扫一遍全站的结构化数据一致性。** 复制模板做新文章时，
+除了标题四处，还有 `description`（meta / og / twitter / JSON-LD 四处）、
+绝对 URL（文件里出现 5 次）要同步。漏改的那几处都不会报错。
+
 **新建页面要查全站孤例数据。** 调研时发现 `index.html` 有三处数据与全站
 其余 22 处冲突：最小线宽首页写 `0.18 mm`（全站口径是 `0.3 mm`）、挑战币
 `38 to 63 mm`（全站 `44 mm to 80 mm`）、奖牌 `50 to 115 mm`（全站

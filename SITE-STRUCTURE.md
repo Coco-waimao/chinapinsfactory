@@ -1721,3 +1721,87 @@ ItemList 8 处集合、FAQPage 19、feed 24 条、llms.txt 30 URL、sitemap 32 �
 **台账**：新建本地文件 `BLOG-LEDGER.md`（已加 `.gitignore`，不入库），
 记录 12 篇已写文章的主词、已占用主词清单、候选队列、口径冲突台账、
 跨页面遗留项、每加一篇要动的 7 个位置。
+### 15.21 第十三篇 blog：付款条件与定金结构（2026-11-18）
+
+**新文章**：`blog/lapel-pin-payment-terms-guide.html`
+《Custom Lapel Pin Payment Terms: How Deposits, Balances and Currency Actually Work》。
+主词 `custom lapel pin payment terms`。7 节 + 7 条 FAQ + 3 张图。
+
+**选题来源**：2026-11-18 做了一次全站缺口复核。台账里剩下的两个候选
+（打样、基础金属）复核后都判定**净增量不足以撑一篇**，且主词分别被
+`products/samples.html` 与 `products/materials.html` 硬占，做 blog 等于自竞争。
+复核中新挖出两个候选：**付款条件**（主词全站零占用）与 **3D 压铸专题**。
+用户拍板选付款条件。
+
+**为什么这个题成立**：12 篇博客里**没有一篇讲付款**。质检篇有一句
+「付款结构与质检时序」，贸易术语篇讲的是货权转移，都不是付款本身。
+买家最紧张、最少被同行文章写透的一环。
+
+**结构**：7 节 + 7 条 FAQ。骨架是「两节点 → 定金买到什么 → 尾款凭证 →
+币种 → 价格与付款是两场谈判 → 样品与首单 → 付款 ≠ 贸易术语」。
+
+**数据出处（逐条回查）**：
+
+| 说法 | 出处 |
+|---|---|
+| 定金释放开模与生产排期；尾款在质检通过后、发货前 | `guides/bulk-order-guide.html`、`guides/faq.html`、`blog/lapel-pin-quality-inspection-guide.html` |
+| 尾款可用装运单据，或用最终质检报告副本 | `guides/faq.html` |
+| 条款写在报价单上而非通用条件 | `guides/faq.html`（"We agree the schedule in the quotation rather than imposing one"） |
+| USD 为主，EUR/GBP/AUD/CAD 可申请；发票币种 = 报价币种 | `guides/faq.html` |
+| 银行电汇为主，成熟客户可另议 | `guides/bulk-order-guide.html` |
+| 样品订单全款在发货前结清 | `guides/bulk-order-guide.html` |
+| 打样费可抵扣生产订单；运费按实报价 | `products/samples.html` |
+| 模具费单列一次性，复单不重复付 | `guides/faq.html`、`products/materials.html`（模具归档三年） |
+| 换金属 = 换模，规格在开模时固定 | `products/materials.html` |
+| 量价自动套档，没有单独议价环节 | `guides/bulk-order-guide.html` |
+| EXW = 在厂门口提货，对首单通常不划算 | `guides/bulk-order-guide.html`（全站唯一 EXW） |
+
+**不写的东西**：定金百分比（站内无出处）、任何价格、退款政策、汇率数字。
+
+**与既有文章的分工**：质检篇讲「怎么检」，本文讲「付款与检验的先后」；
+贸易术语篇讲「货权在哪转」，本文讲「钱怎么付」，并顺手补上 EXW。
+
+**图片**：三张母版在 `raw-images/payment-terms/masters/`，PNG 1536×1024，
+语义化命名 `blog-payment-desk`（商务桌面：笔记本订单表、文件堆与签名笔、
+灰卡上的珐琅徽章、窗边挂样品 —— 头条图，「条款写在报价单上」）、
+`blog-mould-rack`（工具间钢架上的模具与冲头 + 液压压机 + 排期卡 ——
+「定金买的是开模与排产」）、
+`blog-inspection-docs`（深色检验台、无字几何纹铜徽章、放大镜、空白检验单、
+纸箱与胶带 —— 「尾款凭证」）。
+`blog-inspection-docs` **重生成过一次**：第一版徽章上生成了红白十字图案，
+容易让人联想到真实医疗机构标志，不适合放买家站点，换成了无字无标志的几何纹。
+`scripts/blog_images.py` 新增 `payment-terms` slug。
+
+**入口**：进 `blog/index.html` 头条大卡 + `ItemList`（13 条）+ `Blog.blogPost`
+（13 条）。旧头条（电镀那篇）降为网格第一张。**不进导航，不进首页 Journal 精选。**
+
+**Related 列表扩到 12 条**：文章数变 13，规则是「其余全部、按日期倒序」，
+12 篇旧文章侧栏全部重排。
+
+**上下文内链**：新增 5 条 —— `guides/faq.html`（linkband）、
+`blog/trade-terms-fob-cif-ddp-guide.html`（linkband）、
+`blog/lapel-pin-quality-inspection-guide.html`（linkband）、
+`products/samples.html`（linkband）、
+`guides/bulk-order-guide.html`（正文，Payment and shipping 一节）。
+正文内另有 6 条链到质检篇、基础金属页、bulk guide、成本构成篇、打样页、
+贸易术语篇。
+
+**机器层**：sitemap 33 条、feed 25 条、llms.txt 31 URL。
+
+**本轮挖出并修掉的既有 bug**：
+
+1. **`blog/lapel-pin-plating-finishes-guide.html` 的 JSON-LD `description`
+   是上一篇文章的内容**（artwork guide 的描述）。上一轮构建脚本只替换了
+   `headline`，没替换 `description`。这类错误 JSON 解析查不出来，页面也
+   正常显示，只有 Google 读得到。
+2. 另有 4 篇文章的 JSON-LD description 与 meta description 措辞不一致
+   （语义相同、字面不同），已统一为 meta 的写法。
+3. **给 `check.py` 第 3 项加了规则**：文章页的 `BlogPosting.description`
+   必须与该页 `meta description` **逐字一致**。规则只作用于 `blog/` 下
+   非 index 的页面——`blog/index.html` 的 `Blog.blogPost` 数组里每条自带
+   描述，不该与索引页的 meta 一致（第一版规则误伤了它，已收窄）。
+
+**校验结果**：check.py 12 项全绿（35 页、381 张图片引用、0 缺失链接、
+FAQPage 20、feed 25 条、llms.txt 31 URL、sitemap 33 条、零哑类名）；
+nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度横向溢出均为 0px。
+`btn--primary` 金底白字对比度 2.35 是**全站既有问题**，不是本篇引入。

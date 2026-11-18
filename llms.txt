@@ -31,6 +31,7 @@ Quotations are itemised and include the full production specification. No unit p
 
 ## Journal
 
+- [Custom Lapel Pin Payment Terms: How Deposits, Balances and Currency Actually Work](https://www.chinapinsfactory.com/blog/lapel-pin-payment-terms-guide.html): What the deposit releases, when the balance falls due, which currency the invoice is issued in, and why payment terms are a separate line from the trade term.
 - [How to Choose a Plating Finish for Custom Lapel Pins](https://www.chinapinsfactory.com/blog/lapel-pin-plating-finishes-guide.html): Twelve plating finishes that look like twelve colours and behave like three techniques. What bright, matte, antique and brushed actually change on the surface, why a thin plated layer closes up fine lines, and why a plating colour is not a Pantone colour.
 - [How to Prepare Artwork for Custom Lapel Pins](https://www.chinapinsfactory.com/blog/lapel-pin-artwork-guide.html): The artwork limits that decide whether a pin can be made: minimum line width, minimum colour block, text height by diameter, accepted file formats, the pre-flight checklist, and the checks a buyer can run on their own file before sending it.
 - [Factory or Trading Company? How to Tell Before You Order](https://www.chinapinsfactory.com/blog/factory-vs-trading-company.html): A factory quote and a middleman quote look the same on paper. Five questions that separate a real manufacturer from a trading company: who cuts the mould, who owns the plating line, who fills the enamel, who inspects, and who answers for the rush order.

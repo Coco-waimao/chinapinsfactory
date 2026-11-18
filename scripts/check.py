@@ -115,6 +115,27 @@ def check_jsonld(pages):
                 json.loads(block)
             except Exception as e:
                 fail('jsonld', f'{r} block {i + 1}: {str(e)[:90]}')
+
+    # The BlogPosting description must be the same string as the meta
+    # description on the same page. A copy-paste between articles leaves
+    # the previous article's text behind in the structured data, which
+    # no JSON parse will catch.
+    for r, f in pages:
+        # Only article pages carry a single BlogPosting. The blog index
+        # holds a Blog.blogPost array whose entries each describe a
+        # different article, and those must not match the index page's
+        # own meta description.
+        if not (r.startswith('blog/') and not r.endswith('index.html')):
+            continue
+        text = load(f)
+        meta = re.search(r'<meta name="description" content="(.*?)">', text, re.S)
+        if not meta:
+            continue
+        m = re.search(r'"@type":\s*"BlogPosting".*?"description":\s*"(.*?)"', text, re.S)
+        if not m:
+            continue
+        if m.group(1).strip() != meta.group(1).strip():
+            fail('jsonld', f'{r}: BlogPosting description differs from the meta description')
     return total
 
 

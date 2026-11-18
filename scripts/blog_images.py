@@ -69,6 +69,11 @@ SLUGS = {
         'blog-finish-compare',
         'blog-xrf-test',
     ],
+    'payment-terms': [
+        'blog-payment-desk',
+        'blog-mould-rack',
+        'blog-inspection-docs',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'
