@@ -1805,3 +1805,85 @@ ItemList 8 处集合、FAQPage 19、feed 24 条、llms.txt 30 URL、sitemap 32 �
 FAQPage 20、feed 25 条、llms.txt 31 URL、sitemap 33 条、零哑类名）；
 nav_responsive.py 126 组合通过；1440/1024/768/390 四宽度横向溢出均为 0px。
 `btn--primary` 金底白字对比度 2.35 是**全站既有问题**，不是本篇引入。
+
+### 15.22 第十四篇 blog：3D 压铸专题（2026-11-23）
+
+**新文章**：`blog/3d-die-cast-lapel-pins.html`
+《3D Die Cast Lapel Pins: How Cast Relief, Cutouts and Moving Parts Work》。
+主词 `3D die cast lapel pins`。7 节 + 7 条 FAQ + 3 张图。
+
+**选题来源**：台账里的候选 E。13 篇博客里没有一篇展开压铸，
+站内却已经把它写进了五工艺对比表和产品页规格块——是典型的
+「产品页讲了一半、博客零覆盖」的缺口。候选 F（数量分档）复核后放弃：
+五档数量带只在 `guides/bulk-order-guide.html` 出现一次且不带具体数量，
+写下去只能靠编数据。
+
+**为什么这个题成立**：压铸是站内五工艺里唯一能做出**贯穿镂空**和
+**活动机构**的工艺，这条独有论据在别处一个字都没写过。
+
+**结构**：压铸是什么 → 浮雕与深度 → 镂空与活动件 → 尺寸/金属/交期 →
+颜色与表面 → 模具与返单 → 什么时候不该选压铸。
+
+**数据出处（逐条回查）**：
+
+| 说法 | 出处 |
+|---|---|
+| 锌合金，两片式铸造模具 | `guides/process-comparison.html` 工艺表 |
+| 多级浮雕 from 1.5 mm upward | 同上 |
+| 浮雕为 raised，最小线宽不适用 | 同上 |
+| 铸后喷漆，solid colours，单色一个 Pantone 步长 | 同上 Colour 表 |
+| 7 to 10 business days | 同上 Tooling 表 |
+| cast metal with no enamel face | 同上 Durability 列 |
+| 压铸是五工艺里最复杂的模具 | 同上 Tooling 列 |
+| 唯一能做 hinge / spinner / rolling part 的工艺 | 同上「How to choose」一节 |
+| 内部镂空 cast into the mould，不带 pierce mark | `index.html` 3D die cast 卡 |
+| Spinner, slider, hinge / bobble | `index.html` 3D die cast 卡 |
+| 8 台热室锌合金压铸机，housings up to 80 mm | `company/factory.html` |
+| 20 mm to 80 mm | `products/custom-enamel-pins.html` 规格块 |
+| Plated, with optional painted detail | 同上 |
+| 铸件吃满 12 种镀层含 antique/matte，因表面更厚更宽容 | `blog/lapel-pin-plating-finishes-guide.html` |
+| 做旧效果需要有浮雕配合 | 同上 |
+| relief is formed rather than pierced | `blog/lapel-pin-artwork-guide.html` |
+| 模具归档三年，返单不重复付模具费 | `guides/process-comparison.html`、bulk guide |
+
+**明确不写**：任何价格、模具费数额、压铸件的具体重量、
+「压铸件质检查什么」（站内质检工序表只有 stamping / polishing /
+plating / enamelling / assembly / packing 六道，**没有压铸专属检查点**，
+写这个就等于编流程）。活动件一节写的是「图纸上要确认哪四项」，
+不是「我们怎么检」——前者有据可依，后者没有。
+
+**接线**：blog/index.html 新文章升头条（原头条降为网格第一张）；
+`Blog.blogPost` 与 `ItemList` 同步扩到 14 条；全站 Related 扩为
+「其余 13 篇、按日期倒序」；上下文内链进 `guides/process-comparison.html`、
+`products/custom-enamel-pins.html`、`blog/lapel-pin-artwork-guide.html`、
+`blog/lapel-pin-plating-finishes-guide.html`；机器层 sitemap 34 条 /
+feed 26 条 / llms.txt 32 URL。
+
+**本轮挖出并修掉的既有 bug（5 类，都是同一根因）**：
+
+1. **`blog/index.html` 的 `Blog.blogPost` 里有一条挂着别的文章标题**。
+   `lapel-pin-vs-challenge-coin-vs-badge.html` 那条的 headline 写成了
+   「Factory or Trading Company? How to Tell Before You Order」，
+   description 却是自己的。`check.py` 只校验 `ItemList`，`blogPost`
+   一直是盲区——上一轮加文章时就漏过。
+2. **索引页卡片标题与文章页 `<title>` 有 4 处不一致**。同一篇文章，
+   列表页写「A Step-by-Step Sourcing Guide」，文章页写「A Guide」，
+   用户点进去标题就变了。已统一到**文章页的 title** 为准
+   （文章页 title 同时是 og:title 与社交卡片标题，是权威口径）。
+3. **4 篇文章的 `og:title` / `twitter:title` 仍是旧标题**。这正是
+   记忆里记过的坑：漏改 og:title 不报错、校验全绿，只是社交分享卡片
+   显示上一版标题，肉眼极难发现。
+4. **`feed.xml` 里同样有 4 条 title 用旧措辞**。
+5. **上一次的批量修标题脚本把 `twitter:title` 的属性名从 `name`
+   误写成了 `property`**（Twitter 两种都认，但属于无谓的结构改动）。
+   已规范化回 `name="twitter:title"`。
+
+**给 `check.py` 加了第 13 项 `check_titles`**：一篇文章一个标题，
+四处引用必须逐字一致 —— 文章页 `<title>` ↔ 同页 `og:title`/`twitter:title`、
+索引页 `Blog.blogPost` 的 headline、索引页 `ItemList` 的 name、
+索引页可见卡片标题、`feed.xml` 的 item title。这条规则一加上就当场
+抓出上面第 2、3、4 类共 12 处不一致。
+
+**校验结果**（转码前）：check.py 只剩 16 项图片引用缺失（等母版去水印
+后转码），其余全绿；36 页、393 张图片引用、FAQPage 21、feed 26 条、
+llms.txt 32 URL、sitemap 34 条、零哑类名、84 处标题交叉校验通过。

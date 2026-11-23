@@ -31,6 +31,7 @@ Quotations are itemised and include the full production specification. No unit p
 
 ## Journal
 
+- [3D Die Cast Lapel Pins: How Cast Relief, Cutouts and Moving Parts Work](https://www.chinapinsfactory.com/blog/3d-die-cast-lapel-pins.html): How a cast pin carries real depth, a cutout through the body or a working mechanism, what the two-part zinc alloy mould changes, and when die casting is the wrong process to order.
 - [Custom Lapel Pin Payment Terms: How Deposits, Balances and Currency Actually Work](https://www.chinapinsfactory.com/blog/lapel-pin-payment-terms-guide.html): What the deposit releases, when the balance falls due, which currency the invoice is issued in, and why payment terms are a separate line from the trade term.
 - [How to Choose a Plating Finish for Custom Lapel Pins](https://www.chinapinsfactory.com/blog/lapel-pin-plating-finishes-guide.html): Twelve plating finishes that look like twelve colours and behave like three techniques. What bright, matte, antique and brushed actually change on the surface, why a thin plated layer closes up fine lines, and why a plating colour is not a Pantone colour.
 - [How to Prepare Artwork for Custom Lapel Pins](https://www.chinapinsfactory.com/blog/lapel-pin-artwork-guide.html): The artwork limits that decide whether a pin can be made: minimum line width, minimum colour block, text height by diameter, accepted file formats, the pre-flight checklist, and the checks a buyer can run on their own file before sending it.

@@ -425,6 +425,116 @@ def check_crumbs(pages):
     note(f'breadcrumbs: {checked} pages carry a visible trail')
 
 
+# --------------------------------------------------------- 12. article titles
+def check_titles(pages):
+    """One article, one headline, quoted everywhere.
+
+    The article page owns the headline: it is the <title>, the og:title and
+    the twitter:title. The journal index quotes it in three places, and the
+    feed quotes it once. Each quote has to match the article page exactly.
+
+    Nothing compared them before, so an index card could show one headline
+    while the page it links to showed another, and the blogPost array could
+    carry a completely different article's headline without any check
+    failing. A visitor clicking through sees the title change.
+    """
+    titles = {}
+    for r, f in pages:
+        if not (r.startswith('blog/') and not r.endswith('index.html')):
+            continue
+        text = load(f)
+        m = re.search(r'<title>(.*?)</title>', text, re.S)
+        if m:
+            titles[os.path.basename(r)[:-5]] = m.group(1).strip()
+
+    if not titles:
+        return 0
+
+    checked = 0
+
+    # The article page must agree with its own social cards.
+    for r, f in pages:
+        if not (r.startswith('blog/') and not r.endswith('index.html')):
+            continue
+        slug = os.path.basename(r)[:-5]
+        if slug not in titles:
+            continue
+        text = load(f)
+        for prop in ('og:title', 'twitter:title'):
+            m = re.search(r'<meta property="%s" content="(.*?)">' % prop, text, re.S)
+            if not m:
+                m = re.search(r'<meta name="%s" content="(.*?)">' % prop, text, re.S)
+            if m and m.group(1).strip() != titles[slug]:
+                fail('titles', f'{r}: {prop} differs from the article title')
+            checked += 1
+
+    def slug_from(url):
+        return url.rstrip('/').rsplit('/', 1)[-1].replace('.html', '')
+
+    # The journal index quotes the headline three times.
+    index_text = None
+    for r, f in pages:
+        if r == 'blog/index.html':
+            index_text = load(f)
+            break
+
+    if index_text:
+        for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>',
+                                index_text, re.S):
+            try:
+                data = json.loads(block)
+            except Exception:
+                continue
+            if data.get('@type') == 'Blog':
+                for entry in data.get('blogPost', []):
+                    slug = slug_from(entry.get('url', ''))
+                    if slug in titles:
+                        checked += 1
+                        if entry.get('headline', '').strip() != titles[slug]:
+                            fail('titles',
+                                 f'blog/index.html: blogPost headline for {slug} '
+                                 f'differs from the article title')
+            if data.get('@type') == 'ItemList':
+                for entry in data.get('itemListElement', []):
+                    slug = slug_from(entry.get('url', ''))
+                    if slug in titles:
+                        checked += 1
+                        if entry.get('name', '').strip() != titles[slug]:
+                            fail('titles',
+                                 f'blog/index.html: ItemList name for {slug} '
+                                 f'differs from the article title')
+
+        for m in re.finditer(r'post-card__title">\s*<a href="([^"]+)"[^>]*>(.*?)</a>',
+                             index_text, re.S):
+            slug = slug_from(m.group(1))
+            if slug in titles:
+                checked += 1
+                shown = re.sub(r'<[^>]+>', '', m.group(2)).strip()
+                if shown != titles[slug]:
+                    fail('titles',
+                         f'blog/index.html: card title for {slug} '
+                         f'differs from the article title')
+
+    # The feed quotes it once.
+    feed_path = os.path.join(SITE, 'feed.xml')
+    if os.path.isfile(feed_path):
+        feed = io_open_text(feed_path)
+        for m in re.finditer(r'<item>\s*<title>(.*?)</title>\s*<link>(.*?)</link>', feed, re.S):
+            slug = slug_from(m.group(2))
+            if slug in titles:
+                checked += 1
+                if m.group(1).strip() != titles[slug]:
+                    fail('titles',
+                         f'feed.xml: title for {slug} differs from the article title')
+
+    return checked
+
+
+def io_open_text(path):
+    with open(path, 'r', encoding='utf-8', newline='') as fh:
+        return fh.read()
+
+
 # --------------------------------------------------------------- 11. navigation
 def nav_signature(base_rel, text):
     """The nav as a comparable structure.
@@ -625,6 +735,7 @@ def main():
     check_nav(pages)
     check_classes(pages)
     check_eol(pages)
+    titles_checked = check_titles(pages)
 
     if not QUIET:
         print('=' * 62)
@@ -636,6 +747,7 @@ def main():
         print(f'image references     : {img_total} checked, {missing_imgs} missing')
         print(f'ItemList checked     : {itemlist_checked}')
         print(f'FAQPage checked      : {faq_checked}')
+        print(f'article titles       : {titles_checked} cross-checked')
         for n in notes:
             print(f'{n}')
         print()

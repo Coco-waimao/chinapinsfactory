@@ -74,6 +74,11 @@ SLUGS = {
         'blog-mould-rack',
         'blog-inspection-docs',
     ],
+    '3d-die-cast': [
+        'blog-diecast-press',
+        'blog-cast-relief',
+        'blog-diecast-mould',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'

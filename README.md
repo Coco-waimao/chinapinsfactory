@@ -78,7 +78,7 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 
 安装后 `pre-commit` 和 `pre-push` 会自动执行检查，**不通过就拦住提交和推送**，报错直接显示在终端。
 
-检查覆盖 11 项：
+检查覆盖 12 项：
 
 | # | 检查项 | 拦截什么 |
 |---|---|---|
@@ -93,12 +93,18 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 | 9 | 面包屑 | 目录页缺少层级，或目录项没链到对应 hub |
 | 10 | 导航 | 导航链接集合与全站不一致，重复的询价入口，当前项多于一个 |
 | 11 | 行尾 | 单个文件的 CRLF/LF 被意外翻转（会造成巨大无意义 diff） |
+| 12 | 文章标题 | 同一篇文章的标题在文章页、社交卡片、索引页、feed 里不一致 |
 
 第 8 项的原理是：每个页面都必须在链接图上从 `index.html` 可达。`404.html` 与 `thank-you.html` 是仅有的两个例外（前者由服务器兜底，后者由脚本跳转），脚本已按预期处理。
 
 第 9 项对应站点的层级约定：**导航 = 买家意图直达（3 个下拉组 + 1 个平铺项），面包屑 = 目录层级，页脚 = 平铺实用链接。** 子页面包屑形如 `Home / Products / Custom Pins`，其中 `Products` 是可点链接，指向 `products/index.html`；目录页自身显示 `Home / Products`，`Products` 为当前项。目录入口不走页脚——页脚三列装的是具体工艺与杂项链接，塞进目录节点会打乱层级。
 
 第 10 项：导航固定为 `Products | Guides | Our Factory | Journal` 四项顶级，其中前三项各挂一个下拉组（Products 4 个二级、Guides 4 个二级、Our Factory 2 个二级），`Journal` 保持平铺。校验方式不是比对文本，而是把每页 nav 块里的链接归一化成仓库相对路径后比对集合，确保全站一致。每个下拉组的父项本身就是通往目录中枢的真实链接（`products/index.html` / `guides/index.html` / `company/index.html`），脚本不运行时二级页面照样可达。询价入口只有页头 `Get a Quote` 按钮、移动端吸底条与各页语境 CTA，导航里不再重复放。
+
+第 12 项：文章页 `<title>` 是唯一权威口径，`og:title` / `twitter:title`、
+`blog/index.html` 的 `Blog.blogPost` headline 与 `ItemList` name、
+索引页可见卡片标题、`feed.xml` 的 item title 五处都要逐字相同。
+校验方式是把全站文章页的 `<title>` 收成一张表，再逐处比对。
 
 配套的可达性明细可以用 `python scripts/reachability.py` 查看，它会列出每个页面的入链数、出链数、距首页的层级，以及三个目录中枢页各自被哪些页面链接。
 
@@ -216,6 +222,27 @@ XRF 图时直接 Edit 了生成的 HTML，结果重跑构建脚本时这张图�
 **每加一篇要顺手扫一遍全站的结构化数据一致性。** 复制模板做新文章时，
 除了标题四处，还有 `description`（meta / og / twitter / JSON-LD 四处）、
 绝对 URL（文件里出现 5 次）要同步。漏改的那几处都不会报错。
+
+**一篇文章只能有一个标题，四处引用必须逐字一致。** 文章页的 `<title>`
+是权威口径（它同时是 `og:title` 和社交卡片标题）。引用它的有四处：
+同页的 `og:title` / `twitter:title`、`blog/index.html` 的
+`Blog.blogPost` 的 headline、`ItemList` 的 name、索引页可见卡片标题、
+以及 `feed.xml` 的 item title。2026-11-23 一次性挖出 5 类共 12 处不一致，
+其中 `blogPost` 里有一条挂着**别的文章**的 headline（`blogPost` 数组一直
+是 `check.py` 的盲区）。现在 `check.py` 第 13 项 `check_titles` 守着这条线：
+一篇文章的标题在五处出现，任一处对不上就报错。
+**权威口径取文章页 `<title>`**，不是索引页卡片——卡片可以短，标题不能变。
+
+**批量修标题时别把属性名改错。** `og:title` 用 `property="og:title"`，
+`twitter:title` 用 `name="twitter:title"`。用同一个模板套两个属性时，
+很容易把 `twitter:title` 也写成 `property=`，Twitter 两种都认，
+但属于无谓的结构改动，diff 里会多出一行噪音。
+
+**`itemListElement` 这个 key 面包屑和 ItemList 都在用。** 批量改
+`blog/index.html` 时按 `"itemListElement": [` 定位，会命中**面包屑**那个
+数组——新条目插进了面包屑、真正的 ItemList 没动，而且面包屑的
+`position` 被一起改乱。定位要从 `"@type": "ItemList"` 之后开始找。
+同理 `position` 字段不能全局替换，面包屑也有。
 
 **新建页面要查全站孤例数据。** 调研时发现 `index.html` 有三处数据与全站
 其余 22 处冲突：最小线宽首页写 `0.18 mm`（全站口径是 `0.3 mm`）、挑战币

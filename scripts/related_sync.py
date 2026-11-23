@@ -17,6 +17,7 @@ BLOG = os.path.join(ROOT, 'blog')
 
 # slug -> (title shown in the rail, date shown in the rail)
 ARTICLES = {
+    '3d-die-cast-lapel-pins': ('3D die cast pins', '23 Nov 2026'),
     'lapel-pin-payment-terms-guide': ('Payment terms explained', '18 Nov 2026'),
     'lapel-pin-plating-finishes-guide': ('Choosing a plating finish', '16 Nov 2026'),
     'lapel-pin-artwork-guide': ('Preparing your artwork', '10 Nov 2026'),
