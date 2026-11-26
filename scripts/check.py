@@ -647,6 +647,13 @@ def check_classes(pages):
                   errors='replace').read()
         known.update(re.findall(r'[\'"]([a-z][a-z0-9_-]{2,})[\'"]', js))
 
+    # Wrapper classes that exist only to group content that descendant
+    # selectors already style. They carry no visual effect of their own, so
+    # having no rule is not a defect.
+    known.update({
+        'rows__body',
+    })
+
     checked = 0
     for r, f in pages:
         text = load(f)
@@ -662,6 +669,48 @@ def check_classes(pages):
 
 
 # ------------------------------------------------------------ 11. line endings
+def check_tags(pages):
+    """Catch unbalanced container tags.
+
+    A stray closing tag or a missing one does not break the page visually in
+    most cases, because browsers repair the markup silently. It shows up as a
+    diff that looks like a deletion of indentation, which is exactly the kind
+    of change that slips through review. Two articles shipped with a duplicated
+    `</ol>` left over from an earlier edit.
+    """
+    # Void elements never get a closing tag.
+    void = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+            'link', 'meta', 'param', 'source', 'track', 'wbr'}
+    # Elements whose content is raw text, so their body is not markup.
+    raw_text = {'script', 'style'}
+
+    for name, path in pages:
+        src = open(path, encoding='utf-8', errors='replace').read()
+        # Drop comments, script and style bodies.
+        src = re.sub(r'<!--.*?-->', '', src, flags=re.S)
+        for tag in raw_text:
+            src = re.sub(r'<%s\b.*?</%s>' % (tag, tag), '', src,
+                         flags=re.S | re.I)
+
+        stack = []
+        for m in re.finditer(r'<(/?)([A-Za-z][A-Za-z0-9]*)\b[^>]*?(/?)>', src):
+            closing, tag, selfclose = m.group(1), m.group(2).lower(), m.group(3)
+            if tag in void or selfclose:
+                continue
+            if closing:
+                if not stack:
+                    fail('tags', f'{name}: stray </{tag}> with nothing open')
+                    continue
+                if stack[-1] != tag:
+                    fail('tags', f'{name}: </{tag}> closes <{stack[-1]}>')
+                    continue
+                stack.pop()
+            else:
+                stack.append(tag)
+        for tag in stack:
+            fail('tags', f'{name}: <{tag}> is never closed')
+
+
 def check_eol(pages):
     """Guard against accidental line ending flips.
 
@@ -734,6 +783,7 @@ def main():
     check_crumbs(pages)
     check_nav(pages)
     check_classes(pages)
+    check_tags(pages)
     check_eol(pages)
     titles_checked = check_titles(pages)
 

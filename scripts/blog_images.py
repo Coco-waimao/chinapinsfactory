@@ -79,6 +79,11 @@ SLUGS = {
         'blog-cast-relief',
         'blog-diecast-mould',
     ],
+    'offset-print': [
+        'blog-print-dome',
+        'blog-print-plates',
+        'blog-print-press',
+    ],
 }
 
 DEFAULT_SLUG = 'quality-check'

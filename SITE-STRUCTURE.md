@@ -1887,3 +1887,44 @@ feed 26 条 / llms.txt 32 URL。
 **校验结果**（转码前）：check.py 只剩 16 项图片引用缺失（等母版去水印
 后转码），其余全绿；36 页、393 张图片引用、FAQPage 21、feed 26 条、
 llms.txt 32 URL、sitemap 34 条、零哑类名、84 处标题交叉校验通过。
+
+### 15.22 第十五篇：Offset printed 胶印工艺专题（2026-11-26）
+
+**文章**：`blog/offset-printed-lapel-pins.html`
+《Offset Printed Lapel Pins: How Full Colour Artwork Changes the Process》
+主词 `offset printed lapel pins`。7 节 + 7 条 FAQ + 3 张图。
+
+**选题**：台账候选队列在第十二至十四篇后已清空，重新做了全站缺口复核。
+五工艺里 hard/soft enamel 有对比篇、3D die cast 有专题篇，**die struck 与
+offset printed 两篇博客零覆盖**。选胶印是因为它的独有论据更厚：产品页有
+完整规格表、工艺对比页有四张表、图稿页有三段专门讲「为什么珐琅做不了」。
+
+**独有论据**（全站仅此一篇写过）：
+
+- 珐琅是「实心、匹配 Pantone 的液体」，**不混色**，所以渐变必须切成色带，
+  在小尺寸上要么露出台阶要么整段消失 —— 这不是渲染问题，换文件解决不了
+- 照片同理：25 mm 的面上人脸和细纹在压印之前就已经失去辨识度
+- 颜色数无上限：hard enamel 4 个 Pantone、soft enamel 6 个，胶印是
+  CMYK 无限参考，准确性判定标准从「距离 Pantone 一个色阶」变成「对着你
+  自己的文件打样」
+- **不切钢模**，只按设计做一块印版，因此交期 5 到 7 个工作日，是五个
+  工艺里最短的
+- 代价写在明处：罩子是透明不黄变环氧，**边缘是印刷面不是金属面**，耐磨
+  与 die struck 不同
+- 背扣上「轻量印刷件用平针或安全针」这一条
+
+**明确不写**：印刷件的具体质检工序。站内质检工序表只有冲压、抛光、电镀、
+珐琅、装配、打包六道，**没有印刷专属检查点**，写这个等于编流程。改写成
+「边缘与耐磨的取舍」，讲的是买家该怎么选，不是「我们怎么检」。
+
+**接线**：index.html 新文章升头条（原头条降为网格第一张）；blogPost 与
+ItemList 扩到 15 条；全站 Related 扩为「其余 14 篇」；上下文内链进
+process-comparison、design-file-specs、artwork-guide、3d-die-cast-guide；
+sitemap 35 条 / feed 27 条 / llms.txt 33 URL。
+
+**口径冲突（未合并，留待单独一轮）**：首页胶印卡片写
+`non-yellowing polyurethane dome`，产品页规格表写
+`Clear epoxy dome, non-yellowing`。本篇按**产品页**口径（环氧），
+理由是产品页是规格的唯一来源。
+
+**给 `check.py` 加了第 13 项 `check_tags`**：标签配平检查。

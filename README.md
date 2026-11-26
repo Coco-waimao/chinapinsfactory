@@ -94,6 +94,7 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 | 10 | 导航 | 导航链接集合与全站不一致，重复的询价入口，当前项多于一个 |
 | 11 | 行尾 | 单个文件的 CRLF/LF 被意外翻转（会造成巨大无意义 diff） |
 | 12 | 文章标题 | 同一篇文章的标题在文章页、社交卡片、索引页、feed 里不一致 |
+| 13 | 标签平衡 | 标签未闭合、闭合顺序错乱、出现多余的闭合标签 |
 
 第 8 项的原理是：每个页面都必须在链接图上从 `index.html` 可达。`404.html` 与 `thank-you.html` 是仅有的两个例外（前者由服务器兜底，后者由脚本跳转），脚本已按预期处理。
 
@@ -105,6 +106,15 @@ sh scripts/install-hooks.sh      # 一次性安装 git hook
 `blog/index.html` 的 `Blog.blogPost` headline 与 `ItemList` name、
 索引页可见卡片标题、`feed.xml` 的 item title 五处都要逐字相同。
 校验方式是把全站文章页的 `<title>` 收成一张表，再逐处比对。
+
+第 13 项：标签必须配平。浏览器会自动修复不配平的标记，所以缺 `<body>`
+或者多一个 `</ol>` 在页面上**看不出任何异常**，但它在 diff 里表现为
+「删掉了一段缩进」，审阅时很容易被当成无意义的格式变动放过。校验时
+先剥掉注释与 `script` / `style` 内容，再用栈逐个标签比对开闭。
+
+这条规则一加上就抓出两类既有问题：三篇文章（cost-factors /
+quality-inspection / trade-terms）**压根没有 `<body>` 标签**，只有结尾的
+`</body>`；另外两篇文章的目录侧栏有一处重复的 `</ol>`。都已修复。
 
 配套的可达性明细可以用 `python scripts/reachability.py` 查看，它会列出每个页面的入链数、出链数、距首页的层级，以及三个目录中枢页各自被哪些页面链接。
 
